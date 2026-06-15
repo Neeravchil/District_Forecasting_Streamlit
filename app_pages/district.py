@@ -7,7 +7,8 @@ from utils.forecast import (OFFICIAL_FI, BACKTEST_HEADLINE, MODEL_MAE,
                             MODEL_RMSE, MODEL_R2)
 import pandas as pd
 
-REGION_PALETTE = px.colors.qualitative.Prism + px.colors.qualitative.Safe
+NETWORK_PALETTE = (px.colors.qualitative.Prism + px.colors.qualitative.Safe
+                   + px.colors.qualitative.Vivid)
 
 _LAYOUT = dict(
     paper_bgcolor="white",
@@ -32,7 +33,7 @@ FEATURE_NAMES = {
     "SCHOOL_EFFECT":                      "School effect (history)",
     "SAME_GRADE_2YR_AGO":                 "Same grade — 2 years ago",
     "SCHOOL_SIZE":                        "School size",
-    "REGION_ENCODED":                     "Region",
+    "REGION_ENCODED":                     "Local area",
     "GOVERNANCE_ENCODED":                 "Governance type",
     "IS_HIGH_SCHOOL":                     "Is high school",
     "IS_SELECTIVE":                       "Is selective",
@@ -55,13 +56,13 @@ n_schools      = int(df[(df["SCHOOL_YEAR"] == LATEST) & (df["IS_SCHOOL_OPEN"] ==
 change_pct     = (forecast_total - latest_total) / latest_total * 100
 
 # ── Sidebar filters (scatter only) ───────────────────────────────────────────
-all_regions = sorted(fc["REGION"].dropna().unique().tolist())
+all_networks = sorted(n for n in fc["NETWORK"].dropna().unique() if n != "Unassigned")
 with st.sidebar:
     st.markdown("<p style='font-size:0.82rem; font-weight:700; color:#E8EDF2; "
                 "margin:6px 0 4px 0; letter-spacing:0.03em;'>Scatter filter</p>",
                 unsafe_allow_html=True)
-    region_filter = st.multiselect(
-        "Show regions", options=all_regions, default=all_regions,
+    network_filter = st.multiselect(
+        "Show networks", options=all_networks, default=all_networks,
     )
     size_min = st.slider("Min school enrollment", min_value=0, max_value=2000,
                          value=0, step=25)
@@ -128,7 +129,7 @@ with col_l:
         ("#003057", "🪑", "Seats, sections, and classrooms",
          "Grade-level projections decide how many sections to open, how many rooms to assign, and where space is tight or going empty — months before the first bell."),
         ("#C8973A", "📉", "Decline is uneven, not uniform",
-         "District enrollment has trended down, but the drop is concentrated in specific grades, schools, and regions. A single district number hides where the real pressure is."),
+         "District enrollment has trended down, but the drop is concentrated in specific grades, schools, and networks. A single district number hides where the real pressure is."),
         ("#22C55E", "🎯", "Early enough to act",
          "Projecting the coming year now gives leadership a full planning cycle to rebalance staff, consolidate sections, and target retention before the year locks in."),
     ]
@@ -164,7 +165,7 @@ with col_r:
          "One hundred decision trees are trained in PySpark MLlib, with the 2022–24 migrant-surge years down-weighted so they inform without dominating the model."),
         ("#EF4444", "4", "Score next year without Spark",
          "The trained trees are stored as Parquet and scored in pure Python — no Java runtime needed. Projections run in milliseconds on any machine."),
-        ("#22C55E", "5", "Roll up to school, region, or district",
+        ("#22C55E", "5", "Roll up to school, network, or district",
          "Grade-level projections sum cleanly to any level, so every leader sees a forecast scoped to their span of control."),
     ]
     for color, num, title, desc in stages:
@@ -361,9 +362,9 @@ st.markdown("<hr class='thin'/>", unsafe_allow_html=True)
 st.markdown("<div class='section-header'>Where Enrollment Is Growing or Shrinking</div>",
             unsafe_allow_html=True)
 st.markdown(f"<div class='section-sub'>Each bubble is one school — {LATEST} enrollment vs projected "
-            f"% change into {FYEAR}, coloured by region</div>", unsafe_allow_html=True)
+            f"% change into {FYEAR}, coloured by network</div>", unsafe_allow_html=True)
 
-school_fc = (fc.groupby(["SCHOOL_KEY", "SCHOOL_LABEL", "REGION"], as_index=False)
+school_fc = (fc.groupby(["SCHOOL_KEY", "SCHOOL_LABEL", "NETWORK"], as_index=False)
              .agg(LATEST_ENR=("ACTUAL_LATEST", "sum"),
                   FORECAST_ENR=("FORECAST_ENROLLMENT", "sum")))
 school_fc = school_fc[school_fc["LATEST_ENR"] > 0].copy()
@@ -372,18 +373,18 @@ school_fc["change_pct"] = ((school_fc["FORECAST_ENR"] - school_fc["LATEST_ENR"])
 school_fc["change_pct"] = school_fc["change_pct"].clip(-50, 50)
 
 scatter_df = school_fc[
-    (school_fc["REGION"].isin(region_filter)) &
+    (school_fc["NETWORK"].isin(network_filter)) &
     (school_fc["LATEST_ENR"] >= size_min)
 ].copy()
 
 fig2 = px.scatter(
     scatter_df, x="LATEST_ENR", y="change_pct",
-    size="LATEST_ENR", color="REGION",
-    color_discrete_sequence=REGION_PALETTE, size_max=26,
+    size="LATEST_ENR", color="NETWORK",
+    color_discrete_sequence=NETWORK_PALETTE, size_max=26,
     hover_data={"SCHOOL_LABEL": True, "LATEST_ENR": ":,", "FORECAST_ENR": ":,",
-                "change_pct": ":.1f", "REGION": True},
+                "change_pct": ":.1f", "NETWORK": True},
     labels={"LATEST_ENR": f"{LATEST} enrollment", "change_pct": f"Projected % change → {FYEAR}",
-            "FORECAST_ENR": f"{FYEAR} projection", "SCHOOL_LABEL": "School", "REGION": "Region"},
+            "FORECAST_ENR": f"{FYEAR} projection", "SCHOOL_LABEL": "School", "NETWORK": "Network"},
 )
 fig2.add_hline(y=0, line_dash="dot", line_color="#64748B", line_width=1.5,
                annotation_text="No change", annotation_position="top right",

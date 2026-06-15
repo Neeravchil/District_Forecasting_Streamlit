@@ -17,7 +17,7 @@ from utils.forecast import (OFFICIAL_FI, BACKTEST_HEADLINE, BACKTEST_BY_YEAR,
 # Plain-language names for the pieces of information the model uses
 FEATURE_NAMES = {
     "SAME_GRADE_LAST_YEAR":               "This grade, last year",
-    "DISTRICT_GRADE_ENROLLMENT_LAST_YEAR":"Network-wide size of this grade, last year",
+    "DISTRICT_GRADE_ENROLLMENT_LAST_YEAR":"District-wide size of this grade, last year",
     "SCHOOL_TOTAL_LAST_YEAR":             "Whole school's size, last year",
     "GRADE_idx":                          "Which grade it is",
     "GRADE_NUMERIC":                      "Grade order",
@@ -27,7 +27,7 @@ FEATURE_NAMES = {
     "AVG_SURVIVAL_RATE_3YR":              "How many usually stay (3-yr average)",
     "SCHOOL_EFFECT":                      "This school's track record",
     "SAME_GRADE_2YR_AGO":                 "This grade, two years ago",
-    "REGION_ENCODED":                     "Region",
+    "REGION_ENCODED":                     "Local area",
     "GOVERNANCE_ENCODED":                 "School type",
     "IS_HIGH_SCHOOL":                     "Is a high school",
     "IS_SELECTIVE":                       "Is selective-enrollment",
@@ -52,7 +52,7 @@ st.markdown("""
     <div style='font-size:0.97rem; color:#C9EAD9; line-height:1.7;'>
         Instead of relying on a single rule, the new model learns from
         <b style='color:#FFFFFF;'>seven years of real enrollment</b> — picking up how a school's size,
-        the grade, the region, and its history all combine to shape next year's numbers. It still uses
+        the grade, the network, and its history all combine to shape next year's numbers. It still uses
         the old "how many students stay" idea, but as <b style='color:#FFFFFF;'>one clue among many</b>.
     </div>
 </div>
@@ -75,7 +75,7 @@ stages = [
     ("#EF4444", "4", "Runs anywhere, instantly",
      "The trained model is saved in a lightweight form and produces a forecast in a fraction of a second — no special big-data setup needed."),
     ("#22C55E", "5", "Add up to any level",
-     "Grade-by-grade forecasts roll up cleanly to the school, region, or whole-network total."),
+     "Grade-by-grade forecasts roll up cleanly to the school, network, or whole-district total."),
 ]
 scols = st.columns(5)
 for col, (color, num, title, desc) in zip(scols, stages):
@@ -127,7 +127,7 @@ st.markdown("""
 <div class='insight-card'>
     <div class='title'>📌 History matters most — but it isn't the whole story</div>
     <div class='body'>The strongest single clue is how big this grade was last year (about a third of the
-    forecast). What makes the model better than the old way is the next chunk — the network-wide trend
+    forecast). What makes the model better than the old way is the next chunk — the district-wide trend
     for that grade, the school's overall size, and which grade it is — context the old method never
     looked at. The "how many students stay" idea is still in there, just as one clue among many.</div>
 </div>

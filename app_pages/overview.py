@@ -19,11 +19,16 @@ fc = build_forecast(df)
 LATEST = latest_year(df)
 FYEAR = LATEST + 1
 
-network_latest   = int(df[df["SCHOOL_YEAR"] == LATEST]["ENROLLMENT"].sum())
-network_forecast = int(fc["FORECAST_ENROLLMENT"].sum())
-change_pct       = (network_forecast - network_latest) / network_latest * 100
-n_schools        = int(fc["SCHOOL_KEY"].nunique())
-n_regions        = int(fc["REGION"].nunique())
+# Schools without an assigned network are kept in the district total but not shown
+# as a network of their own.
+UNASSIGNED = "Unassigned"
+fc_net = fc[fc["NETWORK"] != UNASSIGNED]
+
+district_latest   = int(df[df["SCHOOL_YEAR"] == LATEST]["ENROLLMENT"].sum())
+district_forecast = int(fc["FORECAST_ENROLLMENT"].sum())
+change_pct        = (district_forecast - district_latest) / district_latest * 100
+n_schools         = int(fc["SCHOOL_KEY"].nunique())
+n_networks        = int(fc_net["NETWORK"].nunique())
 
 # ══════════════════════════════════════════════════════════════════════════════
 # HERO
@@ -41,8 +46,8 @@ st.markdown(f"""
         This dashboard shows where our new enrollment forecast stands for the {FYEAR} planning year.
         It replaces the old Cohort Survival Rate (CSR) spreadsheet with a model that
         <b style='color:#FFFFFF;'>learns from seven years of real enrollment</b> — and gives a number
-        for the <b style='color:#FFFFFF;'>whole network</b> as well as for
-        <b style='color:#FFFFFF;'>every single school</b>.
+        for <b style='color:#FFFFFF;'>every school</b>, which then add up to each
+        <b style='color:#FFFFFF;'>network</b> and the district as a whole.
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -50,10 +55,10 @@ st.markdown(f"""
 # ── KPI strip ─────────────────────────────────────────────────────────────────
 c1, c2, c3, c4 = st.columns(4)
 kpis = [
-    (f"{network_forecast:,}", f"{FYEAR} Forecast",   "Students expected across the whole network"),
-    (f"{change_pct:+.1f}%",   "Expected Change",     f"Compared with {LATEST}"),
-    (f"{n_schools:,}",        "Schools Covered",     "Every open school, every grade"),
-    (f"±{MODEL_MAE:.0f}",     "Typical Accuracy",    "How close each school-grade estimate usually lands"),
+    (f"{district_forecast:,}", f"{FYEAR} Forecast",  "Students expected across the whole district"),
+    (f"{change_pct:+.1f}%",    "Expected Change",    f"Compared with {LATEST}"),
+    (f"{n_schools:,}",         "Schools Covered",    f"Rolling up into {n_networks} networks"),
+    (f"±{MODEL_MAE:.0f}",      "Typical Accuracy",   "How close each school-grade estimate usually lands"),
 ]
 for col, (val, lbl, sub) in zip([c1, c2, c3, c4], kpis):
     with col:
@@ -102,48 +107,112 @@ for col, color, num, title, body in pages:
 st.markdown("<hr class='thin'/>", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
-# PREDICTIONS — whole network + by region + by school
+# HOW WE FORECAST — Then vs Now (plain-English methodology)
+# ══════════════════════════════════════════════════════════════════════════════
+st.markdown("<div class='section-header'>How We Forecast — Then vs Now</div>", unsafe_allow_html=True)
+st.markdown("<div class='section-sub'>The shift from the old method to the new one, in plain English</div>",
+            unsafe_allow_html=True)
+
+then_col, now_col = st.columns(2, gap="large")
+with then_col:
+    st.markdown(f"""
+    <div style='background:#FDF8F0; border:1px solid #E8D9B8; border-top:4px solid #C8973A;
+                border-radius:10px; padding:20px 22px; height:100%;
+                box-shadow:0 1px 4px rgba(0,48,87,0.06);'>
+        <div style='font-size:0.72rem; font-weight:700; color:#C8973A; letter-spacing:0.1em;
+                    text-transform:uppercase; margin-bottom:6px;'>Then</div>
+        <div style='font-size:1.05rem; font-weight:800; color:#003057; margin-bottom:10px;'>
+            The old way — Cohort Survival Rate
+        </div>
+        <div style='font-size:0.86rem; color:#4A4030; line-height:1.7;'>
+            For years, enrollment was projected with a single rule of thumb: take how many students
+            were in a grade this year, and assume a similar share will move up to the next grade next
+            year — based on how that move has gone in the recent past. It's easy to follow, but it
+            leans on that one pattern alone. It can't take in a school's size, its history, or wider
+            trends, so small misjudgements quietly build up grade after grade — and in practice it
+            tended to <b>predict more students than actually showed up</b>.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+with now_col:
+    st.markdown(f"""
+    <div style='background:#F0FAF4; border:1px solid #BFE6CF; border-top:4px solid #22C55E;
+                border-radius:10px; padding:20px 22px; height:100%;
+                box-shadow:0 1px 4px rgba(0,48,87,0.06);'>
+        <div style='font-size:0.72rem; font-weight:700; color:#1B9E5A; letter-spacing:0.1em;
+                    text-transform:uppercase; margin-bottom:6px;'>Now</div>
+        <div style='font-size:1.05rem; font-weight:800; color:#003057; margin-bottom:10px;'>
+            The new way — District Enrollment ML model
+        </div>
+        <div style='font-size:0.86rem; color:#26402F; line-height:1.7;'>
+            The new model learns from <b>seven years of real enrollment</b> across every school and
+            grade. Instead of one rule, it weighs many clues together — last year's count, the school's
+            overall size, the grade, the network, and each school's own track record — to spot the
+            patterns that actually drive enrollment up or down. It still uses the old "how many students
+            move up" idea, but as just one clue among many. The result is a forecast that is
+            <b>noticeably more accurate and far less prone to over-counting</b>, with a clear sense of
+            how confident we can be.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("<hr class='thin'/>", unsafe_allow_html=True)
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PREDICTIONS — district total, by network, by school
 # ══════════════════════════════════════════════════════════════════════════════
 st.markdown(f"<div class='section-header'>{FYEAR} Predictions</div>", unsafe_allow_html=True)
-st.markdown("<div class='section-sub'>The forecast for the whole network, and broken down the way "
-            "leaders plan — by region and by school</div>", unsafe_allow_html=True)
+st.markdown("<div class='section-sub'>School forecasts added up the way leaders plan — by school, "
+            "by network, and for the district as a whole</div>", unsafe_allow_html=True)
 
-# Whole-network headline
+# Whole-district headline
 st.markdown(f"""
 <div class='info-box'>
-    <b>Whole network:</b> {network_latest:,} students enrolled in {LATEST} →
-    <b>{network_forecast:,} expected in {FYEAR}</b>
-    ({change_pct:+.1f}%, a change of {network_forecast - network_latest:+,} students).
+    <b>Whole district:</b> {district_latest:,} students enrolled in {LATEST} →
+    <b>{district_forecast:,} expected in {FYEAR}</b>
+    ({change_pct:+.1f}%, a change of {district_forecast - district_latest:+,} students).
 </div>
 """, unsafe_allow_html=True)
 
-# By-region breakdown
-region_tbl = (fc.groupby("REGION", as_index=False)
-              .agg(**{f"{LATEST} Actual": ("ACTUAL_LATEST", "sum"),
-                      f"{FYEAR} Forecast": ("FORECAST_ENROLLMENT", "sum")}))
-region_tbl["Change"] = region_tbl[f"{FYEAR} Forecast"] - region_tbl[f"{LATEST} Actual"]
-region_tbl["Change %"] = (region_tbl["Change"] / region_tbl[f"{LATEST} Actual"] * 100).round(1)
-region_tbl = region_tbl.sort_values(f"{FYEAR} Forecast", ascending=False).rename(columns={"REGION": "Region"})
+# By-network breakdown — school predictions summed up to each network (Unassigned hidden)
+network_tbl = (fc_net.groupby("NETWORK", as_index=False)
+               .agg(**{"Schools": ("SCHOOL_KEY", "nunique"),
+                       f"{LATEST} Actual": ("ACTUAL_LATEST", "sum"),
+                       f"{FYEAR} Forecast": ("FORECAST_ENROLLMENT", "sum")}))
+network_tbl["Change"] = network_tbl[f"{FYEAR} Forecast"] - network_tbl[f"{LATEST} Actual"]
+network_tbl["Change %"] = (network_tbl["Change"] / network_tbl[f"{LATEST} Actual"] * 100).round(1)
+network_tbl = network_tbl.sort_values(f"{FYEAR} Forecast", ascending=False).rename(columns={"NETWORK": "Network"})
 
-# By-school breakdown
-school_tbl = (fc.groupby(["SCHOOL_KEY", "SCHOOL_LABEL", "REGION"], as_index=False)
+# By-school breakdown — every school stays; blank the label for unassigned schools
+school_tbl = (fc.groupby(["SCHOOL_KEY", "SCHOOL_LABEL", "NETWORK"], as_index=False)
               .agg(**{f"{LATEST} Actual": ("ACTUAL_LATEST", "sum"),
                       f"{FYEAR} Forecast": ("FORECAST_ENROLLMENT", "sum")}))
 school_tbl["Change"] = school_tbl[f"{FYEAR} Forecast"] - school_tbl[f"{LATEST} Actual"]
 school_tbl["Change %"] = (school_tbl["Change"] /
                           school_tbl[f"{LATEST} Actual"].replace(0, pd.NA) * 100).round(1)
+school_tbl["NETWORK"] = school_tbl["NETWORK"].replace(UNASSIGNED, "—")
 school_tbl = (school_tbl
               .drop(columns=["SCHOOL_KEY"])
-              .rename(columns={"SCHOOL_LABEL": "School", "REGION": "Region"})
+              .rename(columns={"SCHOOL_LABEL": "School", "NETWORK": "Network"})
               .sort_values(f"{FYEAR} Forecast", ascending=False))
 
-tab_region, tab_school = st.tabs([f"🗺️  By Region ({len(region_tbl)})",
-                                  f"🏫  By School ({len(school_tbl):,})"])
+# How many schools sit outside the network split (kept in the district total)
+hidden = fc[fc["NETWORK"] == UNASSIGNED]
+n_hidden_schools  = int(hidden["SCHOOL_KEY"].nunique())
+n_hidden_students = int(hidden["FORECAST_ENROLLMENT"].sum())
 
-_fmt = {f"{LATEST} Actual": "{:,.0f}", f"{FYEAR} Forecast": "{:,.0f}",
+tab_network, tab_school = st.tabs([f"🏙️  By Network ({len(network_tbl)})",
+                                   f"🏫  By School ({len(school_tbl):,})"])
+
+_fmt = {"Schools": "{:,.0f}", f"{LATEST} Actual": "{:,.0f}", f"{FYEAR} Forecast": "{:,.0f}",
         "Change": "{:+,.0f}", "Change %": "{:+.1f}%"}
-with tab_region:
-    st.dataframe(region_tbl.style.format(_fmt, na_rep="—"), hide_index=True, width="stretch")
+with tab_network:
+    st.dataframe(network_tbl.style.format(_fmt, na_rep="—"), hide_index=True, width="stretch")
+    if n_hidden_schools:
+        st.caption(f"Network totals exclude {n_hidden_schools} schools "
+                   f"(~{n_hidden_students:,} students) that have no assigned network. "
+                   f"They are still included in the whole-district total above.")
 with tab_school:
     st.dataframe(school_tbl.style.format(_fmt, na_rep="—"), hide_index=True,
                  width="stretch", height=420)

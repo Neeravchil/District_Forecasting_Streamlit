@@ -83,6 +83,9 @@ def load_data() -> pd.DataFrame:
 
     # ── Friendly labels ──────────────────────────────────────────────────────
     df["GOVERNANCE"] = df["GOVERNANCE"].fillna("Unknown")
+    # NETWORK — the real CPS multi-school grouping that schools roll up into.
+    df["NETWORK"] = df["NETWORK"].fillna("Unassigned") if "NETWORK" in df.columns else "Unassigned"
+    # REGION is kept internally only to back the REGION_ENCODED model feature.
     region_name = (df.dropna(subset=["ANNUAL_REGIONAL_ANALYSIS_REGION"])
                    .groupby("REGION_ENCODED")["ANNUAL_REGIONAL_ANALYSIS_REGION"]
                    .agg(lambda s: s.mode().iloc[0]))
@@ -143,6 +146,7 @@ def build_forecast(_df: pd.DataFrame | None = None) -> pd.DataFrame:
             "SCHOOL_KEY": s,
             "GRADE": r.GRADE,
             "GRADE_NUMERIC": gn,
+            "NETWORK": r.NETWORK,
             "REGION": r.REGION,
             "GOVERNANCE": r.GOVERNANCE,
             "SCHOOL_LABEL": r.SCHOOL_LABEL,

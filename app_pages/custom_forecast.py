@@ -31,7 +31,8 @@ def _context():
 
     gov_enc = (df.dropna(subset=["GOVERNANCE"]).groupby("GOVERNANCE")["GOVERNANCE_ENCODED"]
                .agg(lambda s: int(s.mode().iloc[0])).to_dict())
-    reg_enc = (df.dropna(subset=["REGION"]).groupby("REGION")["REGION_ENCODED"]
+    # Each network maps to the local-area code the model expects (REGION_ENCODED).
+    net_enc = (df.dropna(subset=["NETWORK"]).groupby("NETWORK")["REGION_ENCODED"]
                .agg(lambda s: int(s.mode().iloc[0])).to_dict())
 
     return {
@@ -39,8 +40,8 @@ def _context():
         "grade_to_num": grade_to_num,
         "dist_grade": dist_grade,
         "gov_enc": gov_enc,
-        "reg_enc": reg_enc,
-        "regions": sorted(reg_enc.keys()),
+        "net_enc": net_enc,
+        "networks": sorted(n for n in net_enc if n != "Unassigned"),
         "governances": [g for g in ["District", "Charter", "Contract", "ALOP", "SAFE"]
                         if g in gov_enc],
         "global_sr": df.attrs.get("global_sr", 1.0),
@@ -101,7 +102,7 @@ with r1c2:
     grade = st.selectbox("Grade", options=CTX["grades"],
                          index=min(5, len(CTX["grades"]) - 1), key="cf_grade")
 with r1c3:
-    region = st.selectbox("Region", options=CTX["regions"], key="cf_region")
+    network = st.selectbox("Network", options=CTX["networks"], key="cf_network")
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -213,7 +214,7 @@ row = {
     "IS_ATTENDANCE_AREA": 0.0 if is_sel == "Yes" else 1.0,
     "IS_SMALL_SCHOOL": 1.0 if school_total < 350 else 0.0,
     "IS_HIGH_SCHOOL": 1.0 if is_hs == "High School" else 0.0,
-    "REGION_ENCODED": CTX["reg_enc"].get(region, 0),
+    "REGION_ENCODED": CTX["net_enc"].get(network, 0),
     "GRADE_idx": GRADE_IDX.get(str(grade), GRADE_IDX_KEEP),
 }
 forecast = float(predict_rows(pd.DataFrame([row]))[0])

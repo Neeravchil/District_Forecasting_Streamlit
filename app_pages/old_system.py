@@ -69,7 +69,7 @@ with col_r:
             <span style='color:#003057; font-weight:700;'>100 × 0.95 = 95 students.</span>
         </div>
         <div style='font-size:0.82rem; color:#4A6580; line-height:1.6; margin-top:12px;'>
-            Do this for every grade and add them up to get the school, region, and network totals.
+            Do this for every grade and add them up to get the school, network, and district totals.
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -91,7 +91,7 @@ steps = [
     ("#C8973A", "3", "Guess the entry grade",
      "The lowest grade has no grade below it to build on, so it's set from a separate trend or a flat assumption — a known weak spot."),
     ("#22C55E", "4", "Add it all up",
-     "Total the grades into school, region, and network numbers that feed the staffing and budget plan."),
+     "Total the grades into school, network, and district numbers that feed the staffing and budget plan."),
 ]
 cols = st.columns(4)
 for col, (color, num, title, desc) in zip(cols, steps):

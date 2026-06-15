@@ -12,7 +12,7 @@ _LAYOUT = dict(
     showlegend=True, legend=dict(orientation="h", y=1.08),
 )
 
-ALL_REGIONS_LABEL = "All Regions (District-Wide)"
+ALL_NETWORKS_LABEL = "All Networks (District-Wide)"
 
 # ── Load ──────────────────────────────────────────────────────────────────────
 df = load_data()
@@ -20,7 +20,7 @@ fc = build_forecast(df)
 LATEST = latest_year(df)
 FYEAR = LATEST + 1
 
-sorted_regions = sorted(df["REGION"].dropna().unique().tolist())
+sorted_networks = sorted(n for n in df["NETWORK"].dropna().unique() if n != "Unassigned")
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
@@ -41,7 +41,7 @@ st.markdown(f"""
         Chicago Public Schools · Enrollment Forecasting
     </div>
     <div style='font-size:1.9rem; font-weight:800; color:#FFFFFF; line-height:1.25;'>
-        Forecast at any level — District, Region, or School
+        Forecast at any level — District, Network, or School
     </div>
     <div style='font-size:0.92rem; color:#B8CFDF; margin-top:12px; max-width:720px; line-height:1.6;'>
         Drill from the full district down to a single school. At every level the model produces
@@ -52,30 +52,30 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
-# STEP 1 — REGION
+# STEP 1 — NETWORK
 # ══════════════════════════════════════════════════════════════════════════════
-st.markdown("<div class='section-header'>Step 1 — Choose a Region</div>", unsafe_allow_html=True)
-st.markdown("<div class='section-sub'>Select a region to drill in, or keep "
-            "\"All Regions\" for a district-wide projection.</div>", unsafe_allow_html=True)
+st.markdown("<div class='section-header'>Step 1 — Choose a Network</div>", unsafe_allow_html=True)
+st.markdown("<div class='section-sub'>Select a network to drill in, or keep "
+            "\"All Networks\" for a district-wide projection.</div>", unsafe_allow_html=True)
 
-region_options = [ALL_REGIONS_LABEL] + sorted_regions
-selected_region = st.selectbox("Region", options=region_options, index=0,
-                               label_visibility="collapsed", key="region_sel")
+network_options = [ALL_NETWORKS_LABEL] + sorted_networks
+selected_network = st.selectbox("Network", options=network_options, index=0,
+                                label_visibility="collapsed", key="network_sel")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # STEP 2 — SCHOOL
 # ══════════════════════════════════════════════════════════════════════════════
-if selected_region != ALL_REGIONS_LABEL:
-    reg_df = df[df["REGION"] == selected_region].copy()
-    schools_in_region = (reg_df[["SCHOOL_KEY", "SCHOOL_LABEL"]]
-                         .drop_duplicates().sort_values("SCHOOL_KEY"))
-    ALL_SCHOOLS_LABEL = f"All Schools — {selected_region}"
-    school_options = [ALL_SCHOOLS_LABEL] + schools_in_region["SCHOOL_LABEL"].tolist()
+if selected_network != ALL_NETWORKS_LABEL:
+    reg_df = df[df["NETWORK"] == selected_network].copy()
+    schools_in_network = (reg_df[["SCHOOL_KEY", "SCHOOL_LABEL"]]
+                          .drop_duplicates().sort_values("SCHOOL_KEY"))
+    ALL_SCHOOLS_LABEL = f"All Schools — {selected_network}"
+    school_options = [ALL_SCHOOLS_LABEL] + schools_in_network["SCHOOL_LABEL"].tolist()
 
     st.markdown("<div class='section-header' style='margin-top:12px;'>"
                 "Step 2 — Choose a School</div>", unsafe_allow_html=True)
     st.markdown("<div class='section-sub'>Select a specific school or keep "
-                f"\"All Schools\" for a {selected_region} region projection.</div>",
+                f"\"All Schools\" for a {selected_network} network projection.</div>",
                 unsafe_allow_html=True)
     selected_school = st.selectbox("School", options=school_options, index=0,
                                    label_visibility="collapsed", key="school_sel")
@@ -85,13 +85,13 @@ else:
     ALL_SCHOOLS_LABEL = None
 
 # ── Determine scope ───────────────────────────────────────────────────────────
-if selected_region == ALL_REGIONS_LABEL:
+if selected_network == ALL_NETWORKS_LABEL:
     scope_df, scope_fc = df.copy(), fc.copy()
     scope_label, view_level = "District-Wide", "district"
 elif selected_school is None or selected_school == ALL_SCHOOLS_LABEL:
     scope_df = reg_df.copy()
-    scope_fc = fc[fc["REGION"] == selected_region].copy()
-    scope_label, view_level = f"{selected_region} Region", "region"
+    scope_fc = fc[fc["NETWORK"] == selected_network].copy()
+    scope_label, view_level = f"{selected_network} Network", "network"
 else:
     key = int(selected_school.split()[-1])
     scope_df = reg_df[reg_df["SCHOOL_KEY"] == key].copy()
@@ -118,12 +118,12 @@ if view_level == "school":
         (f"{change_pct:+.1f}%", "Projected Change",       f"{FYEAR} vs {LATEST}",       change_clr),
         (str(n_grades),         "Grades Served",          "Cohorts projected",          "#4A90C4"),
     ]
-elif view_level == "region":
+elif view_level == "network":
     kpis = [
-        (f"{latest_total:,}",   f"{LATEST} Enrollment — Region", selected_region,        "#003057"),
-        (f"{forecast_total:,}", f"{FYEAR} Projection — Region",  selected_region,        "#C8973A"),
-        (f"{change_pct:+.1f}%", "Projected Change",              f"{FYEAR} vs {LATEST}", change_clr),
-        (str(n_schools),        "Schools in Region",             "Open schools",         "#4A90C4"),
+        (f"{latest_total:,}",   f"{LATEST} Enrollment — Network", selected_network,       "#003057"),
+        (f"{forecast_total:,}", f"{FYEAR} Projection — Network",  selected_network,       "#C8973A"),
+        (f"{change_pct:+.1f}%", "Projected Change",               f"{FYEAR} vs {LATEST}", change_clr),
+        (str(n_schools),        "Schools in Network",             "Open schools",         "#4A90C4"),
     ]
 else:
     kpis = [
