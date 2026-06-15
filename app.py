@@ -222,11 +222,18 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
 pg = st.navigation(
-    [
-        st.Page("app_pages/district.py",        title="District Overview",        icon="📊"),
-        st.Page("app_pages/school_forecast.py", title="School Enrollment Report",  icon="🏫"),
-        st.Page("app_pages/custom_forecast.py", title="Custom School Simulator",   icon="🔬"),
-    ],
+    {
+        "Briefing": [
+            st.Page("app_pages/overview.py",        title="Overview",                 icon="📋", default=True),
+            st.Page("app_pages/old_system.py",      title="Old System — CSR",         icon="📜"),
+            st.Page("app_pages/ml_intelligence.py", title="ML Model Intelligence",    icon="🧠"),
+        ],
+        "Explore": [
+            st.Page("app_pages/district.py",        title="District Overview",        icon="📊"),
+            st.Page("app_pages/school_forecast.py", title="School Enrollment Report",  icon="🏫"),
+            st.Page("app_pages/custom_forecast.py", title="Custom School Simulator",   icon="🔬"),
+        ],
+    },
     position="sidebar",
 )
 
