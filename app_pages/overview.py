@@ -10,12 +10,12 @@ missing-history questions.
 import pandas as pd
 import streamlit as st
 
-from utils.loader import load_data, build_forecast, latest_year
+from utils.loader import load_data, build_forecast, latest_year, with_network
 from utils.forecast import MODEL_MAE, BACKTEST_HEADLINE
 
 # ── Data & forecast ───────────────────────────────────────────────────────────
 df = load_data()
-fc = build_forecast(df)
+fc = with_network(build_forecast(df), df)
 LATEST = latest_year(df)
 FYEAR = LATEST + 1
 

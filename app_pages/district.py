@@ -2,7 +2,8 @@ import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
 
-from utils.loader import load_data, build_forecast, district_year_totals, latest_year
+from utils.loader import (load_data, build_forecast, district_year_totals,
+                          latest_year, with_network)
 from utils.forecast import (OFFICIAL_FI, BACKTEST_HEADLINE, MODEL_MAE,
                             MODEL_RMSE, MODEL_R2)
 import pandas as pd
@@ -45,7 +46,7 @@ FEATURE_NAMES = {
 
 # ── Load data & forecast ──────────────────────────────────────────────────────
 df = load_data()
-fc = build_forecast(df)
+fc = with_network(build_forecast(df), df)
 yr_totals = district_year_totals(df)
 LATEST = latest_year(df)
 FYEAR = LATEST + 1

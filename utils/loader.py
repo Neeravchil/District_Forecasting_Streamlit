@@ -101,6 +101,25 @@ def latest_year(df: pd.DataFrame) -> int:
     return int(df["SCHOOL_YEAR"].max())
 
 
+def with_network(fc: pd.DataFrame, _df: pd.DataFrame | None = None) -> pd.DataFrame:
+    """Guarantee a NETWORK column on a forecast frame.
+
+    Self-heals against a stale `build_forecast` cache (e.g. a frame computed
+    before NETWORK existed): if NETWORK is missing, it is backfilled from the
+    source table by school, falling back to "Unassigned".
+    """
+    if "NETWORK" in fc.columns:
+        return fc
+    df = load_data() if _df is None else _df
+    fc = fc.copy()
+    if "NETWORK" in df.columns:
+        net = (df.dropna(subset=["NETWORK"]).groupby("SCHOOL_KEY")["NETWORK"].first())
+        fc["NETWORK"] = fc["SCHOOL_KEY"].map(net).fillna("Unassigned")
+    else:
+        fc["NETWORK"] = "Unassigned"
+    return fc
+
+
 # ════════════════════════════════════════════════════════════════════════════
 # Next-year forecast (roll features forward from the latest actual year)
 # ════════════════════════════════════════════════════════════════════════════

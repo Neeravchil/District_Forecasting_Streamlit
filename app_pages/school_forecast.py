@@ -2,7 +2,7 @@ import streamlit as st
 import plotly.graph_objects as go
 import pandas as pd
 
-from utils.loader import load_data, build_forecast, latest_year
+from utils.loader import load_data, build_forecast, latest_year, with_network
 from utils.forecast import MODEL_MAE, MODEL_RMSE, MODEL_R2
 
 _LAYOUT = dict(
@@ -16,7 +16,7 @@ ALL_NETWORKS_LABEL = "All Networks (District-Wide)"
 
 # ── Load ──────────────────────────────────────────────────────────────────────
 df = load_data()
-fc = build_forecast(df)
+fc = with_network(build_forecast(df), df)
 LATEST = latest_year(df)
 FYEAR = LATEST + 1
 
