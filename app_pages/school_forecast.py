@@ -67,7 +67,9 @@ selected_network = st.selectbox("Network", options=network_options, index=0,
 # ══════════════════════════════════════════════════════════════════════════════
 if selected_network != ALL_NETWORKS_LABEL:
     reg_df = df[df["NETWORK"] == selected_network].copy()
-    schools_in_network = (reg_df[["SCHOOL_KEY", "SCHOOL_LABEL"]]
+    # Only list schools that actually have a forecast (open this year); closed
+    # schools have no history/projection and would otherwise error on selection.
+    schools_in_network = (fc[fc["NETWORK"] == selected_network][["SCHOOL_KEY", "SCHOOL_LABEL"]]
                           .drop_duplicates().sort_values("SCHOOL_KEY"))
     ALL_SCHOOLS_LABEL = f"All Schools — {selected_network}"
     school_options = [ALL_SCHOOLS_LABEL] + schools_in_network["SCHOOL_LABEL"].tolist()
@@ -194,12 +196,13 @@ else:
         marker_line=dict(color="#C8973A", width=1.5),
         marker_pattern_shape="/", marker_pattern_fgcolor="#C8973A",
     ))
-    fig.add_trace(go.Scatter(
-        name="Projection trend", x=[hist_x[-1], str(FYEAR)],
-        y=[hist_y[-1], forecast_total], mode="lines+markers",
-        line=dict(color="#C8973A", width=2.5, dash="dash"),
-        marker=dict(size=9, color="#C8973A", symbol="circle-open"),
-    ))
+    if hist_x:  # only connect a trend line when there is prior history
+        fig.add_trace(go.Scatter(
+            name="Projection trend", x=[hist_x[-1], str(FYEAR)],
+            y=[hist_y[-1], forecast_total], mode="lines+markers",
+            line=dict(color="#C8973A", width=2.5, dash="dash"),
+            marker=dict(size=9, color="#C8973A", symbol="circle-open"),
+        ))
     fig.add_trace(go.Scatter(
         x=[str(FYEAR), str(FYEAR)], y=[forecast_total - band, forecast_total + band],
         mode="lines", line=dict(color="#C8973A", width=10), opacity=0.18,
