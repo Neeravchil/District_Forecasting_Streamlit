@@ -10,7 +10,8 @@ missing-history questions.
 import pandas as pd
 import streamlit as st
 
-from utils.loader import load_data, build_forecast, latest_year, with_network
+from utils.loader import (load_data, build_forecast, latest_year, with_network,
+                          model_vs_baseline)
 from utils.forecast import MODEL_MAE, BACKTEST_HEADLINE
 
 # ── Data & forecast ───────────────────────────────────────────────────────────
@@ -51,6 +52,48 @@ st.markdown(f"""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
+# ══════════════════════════════════════════════════════════════════════════════
+# MODEL-vs-BASELINE PERFORMANCE BAND  (computed live → refreshes on retrain)
+# ══════════════════════════════════════════════════════════════════════════════
+perf = model_vs_baseline(df)
+pm = perf["_meta"]
+st.markdown(
+    f"<div class='section-header' style='border-left-color:#1B9E5A;'>"
+    f"How Much Better Is the Model Than the Old Method?</div>", unsafe_allow_html=True)
+st.markdown(
+    f"<div class='section-sub'>Scored on last year's held-out data "
+    f"({pm['year']}, {pm['n']:,} school-grade cells) — baseline is the legacy "
+    f"Cohort Survival Rate method. Lower error = better.</div>", unsafe_allow_html=True)
+
+pcols = st.columns(len(perf["order"]))
+for col, key in zip(pcols, perf["order"]):
+    mtr = perf[key]
+    b = mtr["fmt"].format(mtr["baseline"])
+    m = mtr["fmt"].format(mtr["model"])
+    with col:
+        st.markdown(f"""
+        <div title="{mtr['help']}" style='background:#F0FAF4; border:1px solid #BFE6CF;
+                    border-top:4px solid #1B9E5A; border-radius:12px; padding:18px 14px;
+                    text-align:center; height:100%; box-shadow:0 1px 4px rgba(0,48,87,0.06);'>
+            <div style='font-size:2rem; font-weight:800; color:#1B9E5A; line-height:1;'>
+                {mtr['improvement']:.0f}%</div>
+            <div style='font-size:0.68rem; font-weight:800; color:#1B9E5A;
+                        letter-spacing:0.08em; margin-top:2px;'>BETTER</div>
+            <div style='font-size:0.82rem; font-weight:700; color:#003057; margin-top:10px;'>
+                {mtr['label']}</div>
+            <div style='font-size:0.74rem; color:#64748B; margin-top:3px;'>
+                {b} <span style='color:#94A3B8;'>&rarr;</span> <b style='color:#1B9E5A;'>{m}</b></div>
+        </div>
+        """, unsafe_allow_html=True)
+
+st.caption(
+    "**What these mean:** *MAPE / MedAPE* are how far off our enrollment estimates are, "
+    "in percent (lower is better). *Avg miss* is in students; *Budget error* is the total "
+    "over/under-count vs actual enrollment. The student-count and budget gains are the largest "
+    "because the old method occasionally produces extreme over-counts for a few schools.")
+
+st.markdown("<hr class='thin'/>", unsafe_allow_html=True)
 
 # ── KPI strip ─────────────────────────────────────────────────────────────────
 c1, c2, c3, c4 = st.columns(4)

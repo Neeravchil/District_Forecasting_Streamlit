@@ -7796,7 +7796,7 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=321f9ffc">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=1fb43493">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7817,6 +7817,108 @@ a.anchor-link {
 <h2 id="Section-1-%E2%80%94-Imports-&amp;-Configuration">Section 1 — Imports &amp; Configuration<a class="anchor-link" href="#Section-1-%E2%80%94-Imports-&amp;-Configuration">¶</a></h2><p>All tunable parameters are consolidated here. Adjust <code>TRAIN_START_YEAR</code>,
 <code>TRAIN_END_YEAR</code>, <code>VAL_START_YEAR</code>, <code>VAL_END_YEAR</code>, and <code>FORECAST_END_YEAR</code> to
 shift the time windows without touching any other cell.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=886e7d85-ccfd-4c4e-85a6-2f17cf65d006">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s2">"SELECT * FROM MDMF_COPY_RN.dbo.dim_five_essentials LIMIT 1000"</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 5, Finished, Available, Finished, False)</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>SynapseWidget(Synapse.DataFrame, bb90f5bb-b5ec-45d0-ab86-d329baccb76a)</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=8d24e000-1f9e-4d12-bc48-ac9094b1b3ad">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [26]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython"><pre><span></span><span class="c1"># Export ml_enrollment_feature_table_v4 as a single CSV file into Lakehouse Files</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">functions</span> <span class="k">as</span> <span class="n">F</span>
+
+<span class="c1"># 1. Read the feature table</span>
+<span class="n">feat_df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s2">"ml_enrollment_feature_table_v4"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Input rows: </span><span class="si">{</span><span class="n">feat_df</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="c1"># 2. Write to a temporary CSV folder (single partition) under Files</span>
+<span class="n">csv_dir</span> <span class="o">=</span> <span class="s2">"Files/ml_enrollment_feature_table_v4_csv"</span>
+
+<span class="c1"># Clean up any previous export folder</span>
+<span class="k">if</span> <span class="n">notebookutils</span><span class="o">.</span><span class="n">fs</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">csv_dir</span><span class="p">):</span>
+    <span class="n">notebookutils</span><span class="o">.</span><span class="n">fs</span><span class="o">.</span><span class="n">rm</span><span class="p">(</span><span class="n">csv_dir</span><span class="p">,</span> <span class="n">recurse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">feat_df</span><span class="o">.</span><span class="n">coalesce</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">"overwrite"</span><span class="p">)</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"header"</span><span class="p">,</span> <span class="s2">"true"</span><span class="p">)</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="n">csv_dir</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Wrote CSV folder: </span><span class="si">{</span><span class="n">csv_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="c1"># 3. Find the actual CSV part file and copy it to a single-file path</span>
+<span class="n">files</span> <span class="o">=</span> <span class="n">notebookutils</span><span class="o">.</span><span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">csv_dir</span><span class="p">)</span>
+<span class="n">csv_parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">path</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".csv"</span><span class="p">)]</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">csv_parts</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"No CSV part file found in export directory."</span><span class="p">)</span>
+
+<span class="n">single_csv_path</span> <span class="o">=</span> <span class="s2">"Files/ml_enrollment_feature_table_v4.csv"</span>
+<span class="n">notebookutils</span><span class="o">.</span><span class="n">fs</span><span class="o">.</span><span class="n">cp</span><span class="p">(</span><span class="n">csv_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">single_csv_path</span><span class="p">,</span> <span class="n">recurse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Single CSV file written to: </span><span class="si">{</span><span class="n">single_csv_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span><span class="mi">2</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"You can now download 'ml_enrollment_feature_table_v4.csv' from the Lakehouse Files pane."</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 6, Finished, Available, Finished, False)</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Input rows: 31,750
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Wrote CSV folder: Files/ml_enrollment_feature_table_v4_csv
+Single CSV file written to: Files/ml_enrollment_feature_table_v4.csv
+You can now download 'ml_enrollment_feature_table_v4.csv' from the Lakehouse Files pane.
+</pre>
+</div>
 </div>
 </div>
 </div>
@@ -7875,8 +7977,9 @@ shift the time windows without touching any other cell.</p>
 <span class="n">TIME_COL</span>   <span class="o">=</span> <span class="s2">"SCHOOL_YEAR"</span>
 <span class="n">WEIGHT_COL</span> <span class="o">=</span> <span class="s2">"sample_weight"</span>
 
-<span class="n">TARGET_GRADES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"1"</span><span class="p">,</span> <span class="s2">"2"</span><span class="p">,</span> <span class="s2">"3"</span><span class="p">,</span> <span class="s2">"4"</span><span class="p">,</span> <span class="s2">"5"</span><span class="p">,</span> <span class="s2">"6"</span><span class="p">,</span> <span class="s2">"7"</span><span class="p">,</span> <span class="s2">"8"</span><span class="p">,</span> <span class="s2">"10"</span><span class="p">,</span> <span class="s2">"11"</span><span class="p">,</span> <span class="s2">"12"</span><span class="p">]</span>
-<span class="c1"># K and Grade 9 are entry grades and need separate models (birth data / GoCPS application data).</span>
+<span class="c1"># Include all grades K–12 in the feature table; entry grades (K, 9) rely more on</span>
+<span class="c1"># imputed lag/feeder features when they lack internal history.</span>
+<span class="n">TARGET_GRADES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"K"</span><span class="p">,</span> <span class="s2">"1"</span><span class="p">,</span> <span class="s2">"2"</span><span class="p">,</span> <span class="s2">"3"</span><span class="p">,</span> <span class="s2">"4"</span><span class="p">,</span> <span class="s2">"5"</span><span class="p">,</span> <span class="s2">"6"</span><span class="p">,</span> <span class="s2">"7"</span><span class="p">,</span> <span class="s2">"8"</span><span class="p">,</span> <span class="s2">"9"</span><span class="p">,</span> <span class="s2">"10"</span><span class="p">,</span> <span class="s2">"11"</span><span class="p">,</span> <span class="s2">"12"</span><span class="p">]</span>
 
 <span class="n">GRADE_ORDER</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">"PE"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"PK"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"K"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
@@ -7900,7 +8003,7 @@ shift the time windows without touching any other cell.</p>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, 5, Finished, Available, Finished, False)</pre>
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 7, Finished, Available, Finished, False)</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -7937,13 +8040,13 @@ shift the time windows without touching any other cell.</p>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, 6, Finished, Available, Finished, False)</pre>
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 8, Finished, Available, Finished, False)</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>SynapseWidget(Synapse.DataFrame, 0a039810-ed54-4daf-b647-9e90a680908b)</pre>
+<pre>SynapseWidget(Synapse.DataFrame, 06f8124a-103f-4282-8784-1d39834c094b)</pre>
 </div>
 </div>
 </div>
@@ -8017,15 +8120,27 @@ map grades to numeric order, and aggregate to one row per
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, 7, Finished, Available, Finished, False)</pre>
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 9, Finished, Available, Finished, False)</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Raw rows: 9,875,703  |  Columns: 32
-After filtering (no future, no zero-day): 2,940,738
-Aggregated rows (school × grade × year): 50,912
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>After filtering (no future, no zero-day): 2,940,738
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Aggregated rows (school × grade × year): 50,912
 </pre>
 </div>
 </div>
@@ -8144,14 +8259,20 @@ reflects whether a real feeder was found (not the fallback value).</p>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, 8, Finished, Available, Finished, False)</pre>
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 10, Finished, Available, Finished, False)</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Lag + feeder features built.
-  Rows: 50,912
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  Rows: 50,912
 </pre>
 </div>
 </div>
@@ -8238,7 +8359,7 @@ include the current-year label value — that would let the model see the answer
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, 9, Finished, Available, Finished, False)</pre>
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 11, Finished, Available, Finished, False)</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -8334,7 +8455,7 @@ increased. These years are flagged so the model can down-weight them in training
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, 10, Finished, Available, Finished, False)</pre>
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 12, Finished, Available, Finished, False)</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -8515,14 +8636,20 @@ different enrollment dynamics:</p>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, 11, Finished, Available, Finished, False)</pre>
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 13, Finished, Available, Finished, False)</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>dim_school raw rows       : 5,830
-dim_school distinct keys  : 2,915
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>dim_school distinct keys  : 2,915
 dim_school after dedupe   : 2,915 (1 row per SCHOOL_KEY)
 Using NETWORK column from dim_school: 'NETWORK'
 
@@ -8618,34 +8745,136 @@ A <code>⚠</code> flag appears on any feature below 80% — investigate before 
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, 12, Finished, Available, Finished, False)</pre>
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 14, Finished, Available, Finished, False)</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Final feature table: 31,750 rows × 27 columns
+<pre>Final feature table: 36,534 rows × 27 columns
 
 Feature fill rates:
-  ✔  SAME_GRADE_LAST_YEAR                         : 100.0%
-  ✔  SAME_GRADE_2YR_AGO                           : 83.8%
-  ✔  FEEDER_GRADE_LAST_YEAR                       : 100.0%
-  ✔  FEEDER_GRADE_2YR_AGO                         : 84.3%
-  ✔  HAS_FEEDER_GRADE                             : 100.0%
-  ✔  SCHOOL_TOTAL_LAST_YEAR                       : 100.0%
-  ✔  COHORT_SURVIVAL_RATE                         : 84.2%
-  ✔  AVG_SURVIVAL_RATE_3YR                        : 100.0%
-  ✔  DISTRICT_GRADE_ENROLLMENT_LAST_YEAR          : 100.0%
-  ✔  IS_MIGRANT_ANOMALY_YEAR                      : 100.0%
-  ✔  GOVERNANCE_ENCODED                           : 100.0%
-  ✔  IS_SELECTIVE                                 : 100.0%
-  ✔  IS_ATTENDANCE_AREA                           : 100.0%
-  ✔  IS_SMALL_SCHOOL                              : 100.0%
-  ✔  IS_HIGH_SCHOOL                               : 100.0%
-  ✔  REGION_ENCODED                               : 100.0%
-
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  ✔  SAME_GRADE_LAST_YEAR                         : 100.0%
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  ✔  SAME_GRADE_2YR_AGO                           : 83.6%
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  ✔  FEEDER_GRADE_LAST_YEAR                       : 100.0%
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  ✔  FEEDER_GRADE_2YR_AGO                         : 84.2%
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  ✔  HAS_FEEDER_GRADE                             : 100.0%
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  ✔  SCHOOL_TOTAL_LAST_YEAR                       : 100.0%
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  ✔  COHORT_SURVIVAL_RATE                         : 84.1%
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  ✔  AVG_SURVIVAL_RATE_3YR                        : 100.0%
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  ✔  DISTRICT_GRADE_ENROLLMENT_LAST_YEAR          : 100.0%
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  ✔  IS_MIGRANT_ANOMALY_YEAR                      : 100.0%
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  ✔  GOVERNANCE_ENCODED                           : 100.0%
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  ✔  IS_SELECTIVE                                 : 100.0%
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  ✔  IS_ATTENDANCE_AREA                           : 100.0%
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  ✔  IS_SMALL_SCHOOL                              : 100.0%
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  ✔  IS_HIGH_SCHOOL                               : 100.0%
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  ✔  REGION_ENCODED                               : 100.0%
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
 ✔ Written: 'ml_enrollment_feature_table_v4'
-  Rows   : 31,750  |  Columns: 27
+  Rows   : 36,534  |  Columns: 27
 </pre>
 </div>
 </div>
@@ -8701,7 +8930,7 @@ the future leaks into the past. Always train on years ≤ T−1 and validate on 
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, 13, Finished, Available, Finished, False)</pre>
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 15, Finished, Available, Finished, False)</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -8711,8 +8940,8 @@ the future leaks into the past. Always train on years ≤ T−1 and validate on 
 Configured  train window: 2020 – 2025
 Configured    val window: 2026   – 2026
 
-Train rows : 26,948
-Val rows   : 4,802
+Train rows : 31,005
+Val rows   : 5,529
 </pre>
 </div>
 </div>
@@ -8794,20 +9023,44 @@ first few years of operation (no lag history yet).</p>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, 14, Finished, Available, Finished, False)</pre>
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 16, Finished, Available, Finished, False)</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Computing medians from TRAINING data only:
-  SAME_GRADE_2YR_AGO                           : 23.000
-  FEEDER_GRADE_LAST_YEAR                       : 29.000
-  FEEDER_GRADE_2YR_AGO                         : 29.000
-  COHORT_SURVIVAL_RATE                         : 0.731
-  AVG_SURVIVAL_RATE_3YR                        : 0.627
-  DISTRICT_GRADE_ENROLLMENT_LAST_YEAR          : 14185.000
-  SCHOOL_TOTAL_LAST_YEAR                       : 458.000
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  SAME_GRADE_2YR_AGO                           : 26.000
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  FEEDER_GRADE_LAST_YEAR                       : 30.000
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  FEEDER_GRADE_2YR_AGO                         : 31.000
+  COHORT_SURVIVAL_RATE                         : 0.786
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  AVG_SURVIVAL_RATE_3YR                        : 0.662
+  DISTRICT_GRADE_ENROLLMENT_LAST_YEAR          : 14666.000
+  SCHOOL_TOTAL_LAST_YEAR                       : 454.000
 
 Median imputation applied to train and val.
 </pre>
@@ -8860,13 +9113,13 @@ These years are <strong>not excluded</strong> — the pattern is real — but th
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, 15, Finished, Available, Finished, False)</pre>
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 17, Finished, Available, Finished, False)</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Sample weights — normal: 12,747 (w=1.0)  |  anomaly: 14,201 (w=0.3)
+<pre>Sample weights — normal: 14,681 (w=1.0)  |  anomaly: 16,324 (w=0.3)
 </pre>
 </div>
 </div>
@@ -8991,17 +9244,29 @@ These years are <strong>not excluded</strong> — the pattern is real — but th
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, 16, Finished, Available, Finished, False)</pre>
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 18, Finished, Available, Finished, False)</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Checking training data for NaN / Inf in feature columns...
-Train rows before cleaning : 26,948
-Train rows after  cleaning : 26,948
-Val   rows after  cleaning : 4,802
-
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Train rows before cleaning : 31,005
+Train rows after  cleaning : 31,005
+Val   rows after  cleaning : 5,529
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
 Training GBT (maxDepth=5, maxIter=100, stepSize=0.1, subsampling=0.8) ...
 </pre>
 </div>
@@ -9013,12 +9278,18 @@ Training GBT (maxDepth=5, maxIter=100, stepSize=0.1, subsampling=0.8) ...
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Training complete.
-
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
 ============================================================
   GBT MODEL — Validation Metrics (SY 2026–2026)
 ============================================================
-  RMSE : 35.77
-  MAE  : 8.07
+  RMSE : 43.10
+  MAE  : 10.70
 ============================================================
 </pre>
 </div>
@@ -9076,7 +9347,7 @@ Training GBT (maxDepth=5, maxIter=100, stepSize=0.1, subsampling=0.8) ...
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, 17, Finished, Available, Finished, False)</pre>
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 19, Finished, Available, Finished, False)</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -9157,7 +9428,7 @@ built in Section 4. This is exactly what the current SAS system does.</p>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, 18, Finished, Available, Finished, False)</pre>
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 20, Finished, Available, Finished, False)</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -9168,10 +9439,10 @@ built in Section 4. This is exactly what the current SAS system does.</p>
   CSR BASELINE  (FEEDER_GRADE_LAST_YEAR × AVG_SURVIVAL_RATE_3YR)
   [Domain guide definition: grade N-1 count × historical cross-grade ratio]
 ============================================================
-  RMSE : 4658.94
-  MAE  : 249.13
+  RMSE : 4358.18
+  MAE  : 249.83
 
-  ML improvement over CSR baseline: 99.2% RMSE reduction
+  ML improvement over CSR baseline: 99.0% RMSE reduction
   ✔ ML model is BETTER than the CSR baseline.
 ============================================================
 </pre>
@@ -9231,34 +9502,34 @@ indicates genuine predictive signal — not the model reading the answer off the
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, 19, Finished, Available, Finished, False)</pre>
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 21, Finished, Available, Finished, False)</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Feature Importance:
-  SAME_GRADE_LAST_YEAR                          0.3282  █████████████
-  DISTRICT_GRADE_ENROLLMENT_LAST_YEAR           0.1378  █████
-  SCHOOL_TOTAL_LAST_YEAR                        0.1377  █████
-  GRADE_idx                                     0.1206  ████
-  SAME_GRADE_2YR_AGO                            0.0406  █
-  AVG_SURVIVAL_RATE_3YR                         0.0371  █
-  FEEDER_GRADE_2YR_AGO                          0.0362  █
-  COHORT_SURVIVAL_RATE                          0.0361  █
-  FEEDER_GRADE_LAST_YEAR                        0.0330  █
-  SCHOOL_KEY                                    0.0289  █
-  IS_MIGRANT_ANOMALY_YEAR                       0.0128  
-  IS_SELECTIVE                                  0.0122  
-  REGION_ENCODED                                0.0119  
-  GRADE_NUMERIC                                 0.0111  
-  HAS_FEEDER_GRADE                              0.0067  
-  IS_HIGH_SCHOOL                                0.0063  
-  IS_ATTENDANCE_AREA                            0.0019  
-  GOVERNANCE_ENCODED                            0.0009  
+  SAME_GRADE_LAST_YEAR                          0.5825  ███████████████████████
+  SCHOOL_TOTAL_LAST_YEAR                        0.0955  ███
+  DISTRICT_GRADE_ENROLLMENT_LAST_YEAR           0.0541  ██
+  FEEDER_GRADE_2YR_AGO                          0.0422  █
+  GRADE_idx                                     0.0398  █
+  SCHOOL_KEY                                    0.0394  █
+  REGION_ENCODED                                0.0360  █
+  COHORT_SURVIVAL_RATE                          0.0237  
+  FEEDER_GRADE_LAST_YEAR                        0.0223  
+  SAME_GRADE_2YR_AGO                            0.0189  
+  AVG_SURVIVAL_RATE_3YR                         0.0125  
+  IS_ATTENDANCE_AREA                            0.0088  
+  IS_HIGH_SCHOOL                                0.0086  
+  IS_SELECTIVE                                  0.0065  
+  HAS_FEEDER_GRADE                              0.0046  
+  IS_MIGRANT_ANOMALY_YEAR                       0.0025  
+  GRADE_NUMERIC                                 0.0018  
+  GOVERNANCE_ENCODED                            0.0002  
   IS_SMALL_SCHOOL                               0.0001  
 
-  V3 school-type features combined importance: 0.0333
+  V3 school-type features combined importance: 0.0601
   (&gt; 0.05 indicates school type is meaningfully contributing)
 </pre>
 </div>
@@ -9337,21 +9608,27 @@ to 0 (the anomaly window is treated as over for future forecasts).</p>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, 20, Finished, Available, Finished, False)</pre>
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 22, Finished, Available, Finished, False)</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Forecast for SY2027 (open schools only):
-  School-grade combinations: 5,084
 </pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>SynapseWidget(Synapse.DataFrame, 4f537d61-45c4-46fe-80d6-daa202d9e82a)</pre>
+<pre>  School-grade combinations: 5,911
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>SynapseWidget(Synapse.DataFrame, 08a2454f-55f5-4cf4-8775-64dccdd5e720)</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -9548,7 +9825,7 @@ metrics fair. The 2026 fold should reproduce the headline metrics from Section 1
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, 21, Finished, Available, Finished, False)</pre>
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 23, Finished, Available, Finished, False)</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -9556,8 +9833,20 @@ metrics fair. The 2026 fold should reproduce the headline metrics from Section 1
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Candidate network columns in dim_school: ['NETWORK', 'NETWORK_CHIEF', 'GEO_NETWORK', 'ES_NETWORK']
 Using NETWORK column already present in feature table.
-Distinct networks: 23
-
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Distinct networks: 23
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
 Expanding-window backtest
   Train start (fixed) : 2020
   Evaluation years    : [2023, 2024, 2025, 2026]
@@ -9648,7 +9937,7 @@ prediction set that powers every metric and chart below.</p>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, 22, Finished, Available, Finished, False)</pre>
+<pre>StatementMeta(, d19cdaca-6fa0-468f-918e-5ca30b324312, 24, Submitted, Running, Running, True)</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -9657,7 +9946,7 @@ prediction set that powers every metric and chart below.</p>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>  Year 2023: trained on 12,652 rows  -&gt;  predicted 4,735 rows
+<pre>  Year 2023: trained on 14,518 rows  -&gt;  predicted 5,441 rows
 </pre>
 </div>
 </div>
@@ -9667,7 +9956,7 @@ prediction set that powers every metric and chart below.</p>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>  Year 2024: trained on 17,387 rows  -&gt;  predicted 4,753 rows
+<pre>  Year 2024: trained on 19,959 rows  -&gt;  predicted 5,480 rows
 </pre>
 </div>
 </div>
@@ -9677,21 +9966,7 @@ prediction set that powers every metric and chart below.</p>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>  Year 2025: trained on 22,140 rows  -&gt;  predicted 4,808 rows
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>  Year 2026: trained on 26,948 rows  -&gt;  predicted 4,802 rows
-
-Total out-of-sample predictions: 19,098 rows across years 2023-2026
-Saved -&gt; 'csr_vs_ml_predictions'
-preds_pdf shape: (19098, 10)
+<pre>  Year 2025: trained on 25,439 rows  -&gt;  predicted 5,566 rows
 </pre>
 </div>
 </div>
@@ -9867,74 +10142,7 @@ preds_pdf shape: (19098, 10)
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, 26, Finished, Available, Finished, True)</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>======================================================================
-DISTRICT LEVEL  (CPS-wide, all years pooled)
-======================================================================
-District     n  MAE_CSR  MAE_ML  RMSE_CSR  RMSE_ML     R2_CSR  R2_ML  MAPE_CSR  MAPE_ML  MedAPE_CSR  MedAPE_ML
-District 19098  161.191   8.935 2,905.953   31.819 -1,443.731  0.827   105.074   66.544      24.537     19.131
-
-======================================================================
-NETWORK LEVEL
-======================================================================
-   NETWORK    n   MAE_CSR  MAE_ML  MAE_impr_%  RMSE_CSR  RMSE_ML  MAPE_CSR  MAPE_ML MAE_winner
-Network 13 1087     5.444   4.178      23.250     7.404    5.729    30.244   26.736         ML
- Network 4 1070     6.279   4.180      33.440     9.316    5.823    49.423   40.913         ML
-Network 11  956     5.603   4.338      22.579     7.425    5.697    31.157   24.853         ML
- Network 6  787     6.781   4.530      33.192     9.506    6.337    56.128   38.827         ML
- Network 5  898     6.422   4.641      27.737     9.056    6.249    38.605   32.168         ML
-Network 12 1032     5.872   4.738      19.305     8.148    6.368    34.578   26.911         ML
-Network 10 1012    11.043   5.328      51.755    70.594   10.668    34.279   33.975         ML
-   UNKNOWN 1668     3.265   5.367     -64.376    10.047   16.267    61.483  189.546        CSR
- Network 9  820     6.998   5.410      22.685     9.996    7.160    34.777   29.926         ML
- Network 1 1102    29.009   5.418      81.322   404.323    9.891   166.238   41.785         ML
- Network 7  746    35.432   5.555      84.323   426.317   10.542    79.510   40.090         ML
- Network 3  694    11.267   5.905      47.590    55.691   11.260    34.333   21.958         ML
- Network 8  807   235.439   5.938      97.478 3,329.200   13.150    97.032   25.046         ML
- Network 2  704     8.103   6.025      25.644    11.648    9.694    39.984   42.942         ML
-       ISP 1185    66.174   6.721      89.843   951.147   15.392    76.911   40.835         ML
-   Charter 2368   408.465  12.205      97.012 6,011.377   28.830   166.736   91.174         ML
-  Contract   65   908.805  14.734      98.379 5,726.636   32.845   381.751  115.298         ML
-   Options  478   236.293  21.699      90.817 1,992.202   34.003   213.885   87.345         ML
-    TASSEL    4    15.602  22.098     -41.640    18.996   31.936    50.222   70.921        CSR
-Network 17  333   917.933  22.759      97.521 6,410.530   50.866   417.574  134.338         ML
-Network 16  330   616.922  25.945      95.794 3,479.889   57.131   263.843  128.807         ML
-Network 15  507   938.224  31.779      96.613 6,201.110   86.643   368.403  158.812         ML
-Network 14  445 1,250.140  50.099      95.993 7,367.853  145.502   476.297  199.441         ML
-
-======================================================================
-YEAR-WISE
-======================================================================
- YEAR    n  MAE_CSR  MAE_ML  RMSE_CSR  RMSE_ML     R2_CSR  R2_ML  MAPE_CSR  MAPE_ML MAE_winner
- 2023 4735  179.968   7.527 2,433.169   15.401 -2,482.250  0.901   146.352   88.625         ML
- 2024 4753  142.433  10.675 1,969.448   37.849   -766.947  0.716    81.947   46.104         ML
- 2025 4808   73.417   9.465 1,483.070   33.074   -384.484  0.808    77.818   84.311         ML
- 2026 4802  249.127   8.070 4,658.940   35.772 -2,136.405  0.874   114.551   47.215         ML
-
-======================================================================
-SCHOOL LEVEL  (848 schools)  — best &amp; worst by ML MAE
-======================================================================
-Best 5:
- SCHOOL_KEY  n  MAE_CSR  MAE_ML  MAPE_CSR  MAPE_ML MAE_winner
-        479  1    1.000   0.136   100.000   13.609         ML
-       2105  2    1.000   0.188   100.000   18.850         ML
-       1872  1    1.000   0.296   100.000   29.594         ML
-       2073  1    1.000   0.312   100.000   31.241         ML
-       2280  1    3.000   0.340   100.000   11.324         ML
-
-Worst 5:
- SCHOOL_KEY  n   MAE_CSR  MAE_ML  MAPE_CSR   MAPE_ML MAE_winner
-       1053 18 3,001.748  91.439   620.706   111.954         ML
-       1054 21    99.202  98.472    58.889   876.346         ML
-       1071 20   134.750 147.220    61.185 1,146.075        CSR
-       1050 26   603.754 152.653 1,000.048   486.098         ML
-       1037 26 1,194.112 178.693   267.395   501.167         ML
-</pre>
+<pre>StatementMeta(, , -1, Waiting, , Waiting, True)</pre>
 </div>
 </div>
 </div>
@@ -10029,7 +10237,7 @@ beats CSR and where it doesn't.</p>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, -1, Cancelled, , Cancelled, True)</pre>
+<pre>StatementMeta(, , -1, Waiting, , Waiting, True)</pre>
 </div>
 </div>
 </div>
@@ -10110,48 +10318,7 @@ beats CSR and where it doesn't.</p>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, -1, Cancelled, , Cancelled, True)</pre>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=5df1a284-9440-4387-b45a-4d78e070569f">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s2">"SELECT * FROM MDMF_COPY_RN.dbo.ml_enrollment_feature_table_v4 LIMIT 1000"</span><span class="p">)</span>
-<span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>StatementMeta(, 1907e99c-a6ec-4ed0-97b2-2e1eccbe74e7, -1, Cancelled, , Cancelled, True)</pre>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=88b468d9-3535-4c5b-b382-97aa831f2774">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython"><pre><span></span> 
-</pre></div>
+<pre>StatementMeta(, , -1, Waiting, , Waiting, True)</pre>
 </div>
 </div>
 </div>

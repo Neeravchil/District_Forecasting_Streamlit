@@ -199,6 +199,45 @@ def build_forecast(_df: pd.DataFrame | None = None) -> pd.DataFrame:
     return fc
 
 
+@st.cache_data(ttl=3600, show_spinner=False)
+def model_vs_baseline(_df: pd.DataFrame | None = None) -> dict:
+    """Live model-vs-baseline accuracy on the held-out validation year.
+
+    Baseline = the legacy Cohort Survival Rate estimate
+    (FEEDER_GRADE_LAST_YEAR × AVG_SURVIVAL_RATE_3YR, the notebook's definition).
+    Model    = the saved GBT scored by ``predict_rows``.
+
+    Everything is recomputed from the live model + data, so retraining (new model
+    files) or new data automatically refreshes the dashboard's improvement KPIs.
+    Returns a dict keyed by metric, each with baseline / model / improvement %.
+    """
+    df = load_data() if _df is None else _df
+    val = latest_year(df)
+    v = df[(df["SCHOOL_YEAR"] == val) & (df["ENROLLMENT"] > 0)].copy()
+    actual = v["ENROLLMENT"].to_numpy(float)
+    model_pred = predict_rows(v)
+    baseline = (v["FEEDER_GRADE_LAST_YEAR"]
+                * v["AVG_SURVIVAL_RATE_3YR"].fillna(1.0)).to_numpy(float)
+
+    mape   = lambda p: float(np.mean(np.abs((p - actual) / actual)) * 100)
+    medape = lambda p: float(np.median(np.abs((p - actual) / actual)) * 100)
+    mae    = lambda p: float(np.mean(np.abs(p - actual)))
+    wape   = lambda p: float(np.sum(np.abs(p - actual)) / np.sum(actual) * 100)
+
+    defs = [
+        ("MAPE",   "Average % error",     "How far off the typical estimate is, on average.",       mape,   "{:.0f}%"),
+        ("MedAPE", "Typical % error",     "The middle case — ignores a few extreme outliers.",       medape, "{:.0f}%"),
+        ("MAE",    "Avg miss (students)", "Average students off, per school and grade.",             mae,    "{:.0f}"),
+        ("WAPE",   "Budget error",        "Total over/under-count as a share of real enrollment.",   wape,   "{:.0f}%"),
+    ]
+    out = {"_meta": {"year": int(val), "n": int(len(v))}, "order": [d[0] for d in defs]}
+    for key, label, help_, fn, fmt in defs:
+        b, m = fn(baseline), fn(model_pred)
+        out[key] = {"label": label, "help": help_, "fmt": fmt, "baseline": b, "model": m,
+                    "improvement": ((b - m) / b * 100) if b else float("nan")}
+    return out
+
+
 @st.cache_data(ttl=3600)
 def district_year_totals(_df: pd.DataFrame | None = None) -> pd.DataFrame:
     """District-wide total enrollment per school-year (open schools only)."""
