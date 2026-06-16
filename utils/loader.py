@@ -154,18 +154,27 @@ def load_data() -> pd.DataFrame:
     df["REGION"] = df["REGION"].fillna(
         df["ANNUAL_REGIONAL_ANALYSIS_REGION"]).fillna("Unknown Region")
 
-    # SCHOOL_LABEL — use a real school name if the export carries one, else fall
-    # back to "School <key>". Forward-compatible: names appear automatically once
-    # a name column is present in the CSV.
+    # SCHOOL_LABEL — must be a real school name. NO school-key fallback: if the
+    # export has no name column, or any name is blank, raise so the gap is fixed
+    # at the source (re-run the notebook's Stage 1, which writes SCHOOL_NAME).
     name_col = next((c for c in ["SCHOOL_NAME", "SCHOOL_LONG_NAME", "LONG_NAME",
                                  "SCHOOL_NM", "NAME"] if c in df.columns), None)
-    fallback = "School " + df["SCHOOL_KEY"].astype(int).astype(str)
-    if name_col is not None:
-        nm = df[name_col].astype("string").str.strip()
-        df["SCHOOL_LABEL"] = nm.where(nm.notna() & (nm != "") & (nm.str.lower() != "nan"),
-                                      fallback)
-    else:
-        df["SCHOOL_LABEL"] = fallback
+    if name_col is None:
+        raise KeyError(
+            "No school-name column in CPS_Enrollment_Forecasting.csv "
+            "(looked for SCHOOL_NAME / SCHOOL_LONG_NAME / LONG_NAME / SCHOOL_NM / NAME). "
+            "Re-run the notebook's Stage 1 — Cell 17 now rebuilds the feature table AND "
+            "re-exports the CSV with SCHOOL_NAME — then commit the new CSV. "
+            "No school-key fallback is used.")
+    nm = df[name_col].astype("string").str.strip()
+    blank = nm.isna() | (nm == "") | (nm.str.lower() == "nan")
+    if blank.any():
+        missing_keys = sorted(df.loc[blank, "SCHOOL_KEY"].astype(int).unique())[:10]
+        raise ValueError(
+            f"{int(blank.sum())} rows have a blank '{name_col}' "
+            f"(e.g. SCHOOL_KEY {missing_keys}). Fix the school name at the source — "
+            "no school-key fallback is used.")
+    df["SCHOOL_LABEL"] = nm
     return df
 
 
