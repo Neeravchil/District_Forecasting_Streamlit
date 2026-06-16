@@ -330,6 +330,30 @@ def model_vs_baseline(_df: pd.DataFrame | None = None) -> dict:
     return out
 
 
+@st.cache_data(ttl=3600, show_spinner=False)
+def _xgb_entry_valyear() -> dict:
+    """XGBoost K & 9 predictions for the held-out validation (= latest) year,
+    keyed by (SCHOOL_KEY, GRADE).
+
+    Like :func:`xgb_k9_forecast` but WITHOUT the ``IS_SCHOOL_OPEN == 1`` filter,
+    so it covers every entry-grade row that the accuracy backtest evaluates
+    (which includes closed schools that still reported enrollment). Built from the
+    raw CSV with NaNs preserved. No fallback — load/predict failures propagate.
+    """
+    model = load_xgb_model()
+    raw = pd.read_csv(CSV_PATH)
+    raw["GRADE"] = raw["GRADE"].astype(str)
+    for c in XGB_FEATURES + ["SCHOOL_YEAR"]:
+        raw[c] = pd.to_numeric(raw[c], errors="coerce")
+    val = int(raw["SCHOOL_YEAR"].max())
+    rk = raw[(raw["SCHOOL_YEAR"] == val) & raw["GRADE"].isin(ENTRY_GRADES)].copy()
+    rk["IS_MIGRANT_ANOMALY_YEAR"] = 0
+    rk = rk.drop_duplicates(["SCHOOL_KEY", "GRADE"], keep="last")
+    preds = np.clip(np.round(model.predict(rk[XGB_FEATURES]), 0), 0, None)
+    return {(int(s), str(g)): float(p)
+            for s, g, p in zip(rk["SCHOOL_KEY"], rk["GRADE"], preds)}
+
+
 @st.cache_data(ttl=3600)
 def accuracy_by_group(group_col: str, _df: pd.DataFrame | None = None) -> pd.DataFrame:
     """Per-group CSR vs ML error on the held-out validation year.
@@ -348,9 +372,10 @@ def accuracy_by_group(group_col: str, _df: pd.DataFrame | None = None) -> pd.Dat
     ml = np.asarray(predict_rows(v), dtype=float).copy()
     is_k9 = v["GRADE"].astype(str).isin(ENTRY_GRADES).to_numpy()
     if is_k9.any():
-        # val year == latest year, so xgb_k9_forecast() is exactly the held-out
-        # K/9 prediction. No fallback — a load/predict failure propagates.
-        k9 = xgb_k9_forecast()
+        # Held-out K/9 scored by the XGBoost entry-grade model over ALL val-year
+        # entry rows (incl. closed-but-enrolled schools the backtest evaluates),
+        # so every row is covered. No fallback — load/predict failures propagate.
+        k9 = _xgb_entry_valyear()
         ml[is_k9] = [k9[(int(s), str(g))]
                      for s, g in zip(v.loc[is_k9, "SCHOOL_KEY"], v.loc[is_k9, "GRADE"])]
 
