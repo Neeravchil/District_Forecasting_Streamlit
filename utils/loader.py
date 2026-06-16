@@ -331,6 +331,45 @@ def model_vs_baseline(_df: pd.DataFrame | None = None) -> dict:
 
 
 @st.cache_data(ttl=3600)
+def accuracy_by_group(group_col: str, _df: pd.DataFrame | None = None) -> pd.DataFrame:
+    """Per-group CSR vs ML error on the held-out validation year.
+
+    Same definitions as :func:`model_vs_baseline` (CSR = FEEDER × survival;
+    ML = the served forecast), but broken out by ``group_col`` — e.g. ``"GRADE"``
+    or ``"NETWORK"``. ML uses the exact hybrid the app serves: the XGBoost
+    entry-grade model for K & 9, the Spark GBT for every other grade — so the
+    entry grades are scored the way users actually see them. One row per group
+    with CSR/ML MAE and MedAPE plus the sample count ``n``.
+    """
+    df = load_data() if _df is None else _df
+    val = latest_year(df)
+    v = df[(df["SCHOOL_YEAR"] == val) & (df["ENROLLMENT"] > 0)].copy()
+
+    ml = np.asarray(predict_rows(v), dtype=float).copy()
+    is_k9 = v["GRADE"].astype(str).isin(ENTRY_GRADES).to_numpy()
+    if is_k9.any():
+        # val year == latest year, so xgb_k9_forecast() is exactly the held-out
+        # K/9 prediction. No fallback — a load/predict failure propagates.
+        k9 = xgb_k9_forecast()
+        ml[is_k9] = [k9[(int(s), str(g))]
+                     for s, g in zip(v.loc[is_k9, "SCHOOL_KEY"], v.loc[is_k9, "GRADE"])]
+
+    csr = (v["FEEDER_GRADE_LAST_YEAR"]
+           * v["AVG_SURVIVAL_RATE_3YR"].fillna(1.0)).to_numpy(float)
+    v = v.assign(_actual=v["ENROLLMENT"].to_numpy(float), _ml=ml, _csr=csr)
+
+    recs = []
+    for key, g in v.groupby(group_col, observed=True):
+        a = g["_actual"].to_numpy()
+        rec = {group_col: key, "n": int(len(g))}
+        for nm, p in (("csr", g["_csr"].to_numpy()), ("ml", g["_ml"].to_numpy())):
+            rec[f"{nm}_mae"] = float(np.mean(np.abs(p - a)))
+            rec[f"{nm}_medape"] = float(np.median(np.abs((p - a) / a)) * 100)
+        recs.append(rec)
+    return pd.DataFrame(recs)
+
+
+@st.cache_data(ttl=3600)
 def district_year_totals(_df: pd.DataFrame | None = None) -> pd.DataFrame:
     """District-wide total enrollment per school-year (open schools only)."""
     df = load_data() if _df is None else _df

@@ -13,6 +13,36 @@ import streamlit as st
 
 from utils.forecast import (OFFICIAL_FI, BACKTEST_HEADLINE, BACKTEST_BY_YEAR,
                             MODEL_MAE, MODEL_RMSE, MODEL_R2)
+from utils.loader import accuracy_by_group
+
+CSR_GOLD = "#C8973A"
+ML_GREEN  = "#22A36B"
+_GRADE_ORDER = {"PK": 0, "K": 1, "1": 2, "2": 3, "3": 4, "4": 5, "5": 6, "6": 7,
+                "7": 8, "8": 9, "9": 10, "10": 11, "11": 12, "12": 13}
+
+
+def _grouped_bar(labels, csr_vals, ml_vals, *, ytitle, fmt="{:.0f}", height=360,
+                 rotate=False):
+    """A CSR-gold vs ML-green grouped bar in the page's house style."""
+    fig = go.Figure()
+    fig.add_trace(go.Bar(name="Old way (CSR)", x=labels, y=csr_vals, marker_color=CSR_GOLD,
+                         text=[fmt.format(v) for v in csr_vals], textposition="outside",
+                         textfont=dict(size=10)))
+    fig.add_trace(go.Bar(name="New model", x=labels, y=ml_vals, marker_color=ML_GREEN,
+                         text=[fmt.format(v) for v in ml_vals], textposition="outside",
+                         textfont=dict(size=10)))
+    top = max(list(csr_vals) + list(ml_vals)) if len(csr_vals) else 1
+    fig.update_layout(
+        barmode="group", paper_bgcolor="white", plot_bgcolor="white",
+        font=dict(family="Aptos, Nunito Sans, Segoe UI, Arial", size=12, color="#334D66"),
+        margin=dict(l=46, r=24, t=24, b=90 if rotate else 40),
+        legend=dict(orientation="h", y=1.16, x=0),
+        xaxis=dict(showgrid=False, tickangle=-40 if rotate else 0),
+        yaxis=dict(title=ytitle, showgrid=True, gridcolor="#F1F5F9",
+                   range=[0, top * 1.18]),
+        height=height,
+    )
+    return fig
 
 # Plain-language names for the pieces of information the model uses
 FEATURE_NAMES = {
@@ -212,3 +242,102 @@ st.markdown(f"""
     over-budgeted.</div>
 </div>
 """, unsafe_allow_html=True)
+
+st.markdown("<hr class='thin'/>", unsafe_allow_html=True)
+
+# ══════════════════════════════════════════════════════════════════════════════
+# WHERE THE MODEL REALLY WINS — entry grades, then every grade & network
+# (live on last year's held-out data — refreshes automatically on retrain)
+# ══════════════════════════════════════════════════════════════════════════════
+acc_grade = accuracy_by_group("GRADE")
+acc_net   = accuracy_by_group("NETWORK")
+
+st.markdown("<div class='section-header'>Where the Model Really Wins — the Entry Grades</div>",
+            unsafe_allow_html=True)
+st.markdown("<div class='section-sub'>Kindergarten and Grade 9 have no real 'grade below' to carry "
+            "forward, so the old method is guessing blind — exactly where the model earns its keep</div>",
+            unsafe_allow_html=True)
+
+# Why-it-breaks explainer (reactive vs proactive framing)
+st.markdown("""
+<div style='display:flex; gap:14px; margin:6px 0 18px;'>
+  <div style='flex:1; background:#FBF6EC; border:1px solid #EAD9B6; border-left:4px solid #C8973A;
+              border-radius:10px; padding:14px 16px;'>
+    <div style='font-weight:800; color:#8A6A22; font-size:0.86rem; margin-bottom:4px;'>📜 Old way — reactive</div>
+    <div style='font-size:0.82rem; color:#5E5024; line-height:1.55;'>Carries this year's class forward
+    by a survival rate. At an <b>entry grade</b> there's no class below to carry — so it leans on a
+    stand-in number and can miss by hundreds of students.</div>
+  </div>
+  <div style='flex:1; background:#F0FAF4; border:1px solid #BFE6CF; border-left:4px solid #22A36B;
+              border-radius:10px; padding:14px 16px;'>
+    <div style='font-weight:800; color:#1B7A47; font-size:0.86rem; margin-bottom:4px;'>🧠 New model — proactive</div>
+    <div style='font-size:0.82rem; color:#1F5135; line-height:1.55;'>Reads early signals — district-wide
+    grade trend, school size, neighbourhood and school type — to anticipate the incoming class
+    <b>a year ahead</b>, even with no feeder cohort to lean on.</div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
+# ── Entry grades isolated (their own scale, so the bars are actually visible) ──
+ent = acc_grade[acc_grade["GRADE"].astype(str).isin(["K", "9"])].copy()
+ent["_o"] = ent["GRADE"].astype(str).map(_GRADE_ORDER)
+ent = ent.sort_values("_o")
+ent_labels = ["Kindergarten" if str(g) == "K" else "Grade 9" for g in ent["GRADE"]]
+
+c1, c2 = st.columns(2)
+with c1:
+    st.markdown("<div style='font-weight:700; color:#003057; font-size:0.9rem; "
+                "margin-bottom:2px;'>Typical miss — students off per school</div>", unsafe_allow_html=True)
+    st.plotly_chart(_grouped_bar(ent_labels, ent["csr_mae"], ent["ml_mae"],
+                                 ytitle="Students off (MAE)", fmt="{:,.0f}", height=340),
+                    width="stretch")
+with c2:
+    st.markdown("<div style='font-weight:700; color:#003057; font-size:0.9rem; "
+                "margin-bottom:2px;'>Typical % error</div>", unsafe_allow_html=True)
+    st.plotly_chart(_grouped_bar(ent_labels, ent["csr_medape"], ent["ml_medape"],
+                                 ytitle="MedAPE (%)", fmt="{:.0f}%", height=340),
+                    width="stretch")
+
+# Headline numbers for the story line
+def _row(g):
+    r = ent[ent["GRADE"].astype(str) == g]
+    return (float(r["csr_mae"].iloc[0]), float(r["ml_mae"].iloc[0])) if len(r) else (0.0, 0.0)
+k_csr, k_ml = _row("K")
+n9_csr, n9_ml = _row("9")
+st.markdown(f"""
+<div class='insight-card'>
+    <div class='title'>📌 This is the proactive payoff</div>
+    <div class='body'>On last year's held-out data, the old method missed Kindergarten by about
+    <b>{k_csr:,.0f}</b> students per school and Grade 9 by about <b>{n9_csr:,.0f}</b>. The model pulls
+    those down to roughly <b>{k_ml:,.0f}</b> and <b>{n9_ml:,.0f}</b> — so leaders can right-size
+    classrooms, staffing and budgets for the incoming class <b>before</b> the year starts, instead of
+    reacting once the students show up.</div>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("<hr class='thin'/>", unsafe_allow_html=True)
+
+# ── Every grade — MedAPE (scale-free, so all grades read on one chart) ─────────
+st.markdown("<div class='section-header'>Better at Almost Every Grade</div>", unsafe_allow_html=True)
+st.markdown("<div class='section-sub'>Typical % error by grade — shown as a percentage so entry and "
+            "continuing grades sit on the same readable scale (shorter is better)</div>",
+            unsafe_allow_html=True)
+ag = acc_grade.copy()
+ag["_o"] = ag["GRADE"].astype(str).map(_GRADE_ORDER).fillna(99)
+ag = ag.sort_values("_o")
+g_labels = ["Grade " + str(g) for g in ag["GRADE"]]
+st.plotly_chart(_grouped_bar(g_labels, ag["csr_medape"], ag["ml_medape"],
+                             ytitle="Typical % error (MedAPE)", fmt="{:.0f}%", height=400),
+                width="stretch")
+
+# ── Every network — MedAPE (scale-free) ───────────────────────────────────────
+st.markdown("<div class='section-header'>Better Across the Networks, Too</div>", unsafe_allow_html=True)
+st.markdown("<div class='section-sub'>Typical % error by network — the model is more accurate in nearly "
+            "every grouping leaders plan around</div>", unsafe_allow_html=True)
+an = acc_net[acc_net["NETWORK"].astype(str).str.lower().ne("unassigned")].copy()
+an = an.sort_values("csr_medape", ascending=False)
+st.plotly_chart(_grouped_bar(list(an["NETWORK"].astype(str)), an["csr_medape"], an["ml_medape"],
+                             ytitle="Typical % error (MedAPE)", fmt="{:.0f}%", height=440, rotate=True),
+                width="stretch")
+st.caption("Live on last year's held-out data — Kindergarten and Grade 9 are scored by the dedicated "
+           "entry-grade model, every other grade by the main model. Refreshes automatically on retrain.")
