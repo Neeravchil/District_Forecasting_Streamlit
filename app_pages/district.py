@@ -4,8 +4,7 @@ import plotly.express as px
 
 from utils.loader import (load_data, build_forecast, district_year_totals,
                           latest_year, with_network)
-from utils.forecast import (OFFICIAL_FI, BACKTEST_HEADLINE, MODEL_MAE,
-                            MODEL_RMSE, MODEL_R2)
+from utils.forecast import MODEL_RMSE  # forecast ±RMSE confidence band only
 import pandas as pd
 
 NETWORK_PALETTE = (px.colors.qualitative.Prism + px.colors.qualitative.Safe
@@ -19,30 +18,6 @@ _LAYOUT = dict(
     showlegend=True,
     legend=dict(orientation="h", y=1.08),
 )
-
-# Friendly names for the model's feature columns (district feature-importance chart)
-FEATURE_NAMES = {
-    "SAME_GRADE_LAST_YEAR":               "Same grade — last year",
-    "DISTRICT_GRADE_ENROLLMENT_LAST_YEAR":"District grade total — last year",
-    "SCHOOL_TOTAL_LAST_YEAR":             "School total — last year",
-    "GRADE_idx":                          "Grade level",
-    "GRADE_NUMERIC":                      "Grade (numeric order)",
-    "FEEDER_GRADE_LAST_YEAR":             "Feeder grade — last year",
-    "FEEDER_GRADE_2YR_AGO":               "Feeder grade — 2 years ago",
-    "COHORT_SURVIVAL_RATE":               "Cohort survival rate",
-    "AVG_SURVIVAL_RATE_3YR":              "Avg survival rate (3 yr)",
-    "SCHOOL_EFFECT":                      "School effect (history)",
-    "SAME_GRADE_2YR_AGO":                 "Same grade — 2 years ago",
-    "SCHOOL_SIZE":                        "School size",
-    "REGION_ENCODED":                     "Local area",
-    "GOVERNANCE_ENCODED":                 "Governance type",
-    "IS_HIGH_SCHOOL":                     "Is high school",
-    "IS_SELECTIVE":                       "Is selective",
-    "IS_ATTENDANCE_AREA":                 "Is attendance-area",
-    "IS_SMALL_SCHOOL":                    "Is small school",
-    "HAS_FEEDER_GRADE":                   "Has feeder grade",
-    "IS_MIGRANT_ANOMALY_YEAR":            "Migrant-anomaly year",
-}
 
 # ── Load data & forecast ──────────────────────────────────────────────────────
 df = load_data()
@@ -248,110 +223,13 @@ st.plotly_chart(fig_fc, use_container_width=True)
 
 st.markdown("<hr class='thin'/>", unsafe_allow_html=True)
 
-# ══════════════════════════════════════════════════════════════════════════════
-# WHAT DRIVES THE FORECAST — feature importance
-# ══════════════════════════════════════════════════════════════════════════════
-st.markdown("<div class='section-header'>What Drives the Forecast?</div>", unsafe_allow_html=True)
-st.markdown("<div class='section-sub'>Spark GBT feature importance (sums to 1.0) — "
-            "from the model review document, Section 4</div>",
-            unsafe_allow_html=True)
-
-fi = (pd.DataFrame({"feature": list(OFFICIAL_FI.keys()),
-                    "importance": list(OFFICIAL_FI.values())})
-      .head(10).copy())
-fi["label"] = fi["feature"].map(FEATURE_NAMES).fillna(fi["feature"])
-fi["pct"] = fi["importance"] * 100
-
-fig_fi = go.Figure(go.Bar(
-    x=fi["pct"][::-1], y=fi["label"][::-1], orientation="h",
-    marker_color="#4A90C4",
-    text=[f"{v:.1f}%" for v in fi["pct"][::-1]],
-    textposition="outside", textfont=dict(size=10, color="#334D66"),
-))
-fig_fi.update_layout(
-    paper_bgcolor="white", plot_bgcolor="white",
-    font=dict(family="Aptos, Nunito Sans, Segoe UI, Arial", size=12, color="#334D66"),
-    margin=dict(l=10, r=70, t=10, b=10), showlegend=False,
-    xaxis=dict(showgrid=True, gridcolor="#F1F5F9", showticklabels=False,
-               range=[0, fi["pct"].max() * 1.25]),
-    yaxis=dict(showgrid=False, tickfont=dict(size=11)),
-    height=380,
-)
-st.plotly_chart(fig_fi, use_container_width=True)
-
+# ── Pointer: model detail lives on the ML Model Intelligence page ─────────────
 st.markdown("""
 <div class='insight-card'>
-    <div class='title'>📌 Same-grade history dominates (32%)</div>
-    <div class='body'>If a school had 80 sixth-graders last year, the strongest single predictor of its
-    seventh-graders is exactly that number. Context features — the district-wide grade trend (14%),
-    school total (12%), and the grade itself (11%) — add another ~37%. The cross-grade promotion
-    signals (feeder lags + survival rates, ~19% combined) mean the model still uses the CSR insight,
-    but as one input among many rather than the whole forecast.</div>
-</div>
-""", unsafe_allow_html=True)
-
-st.markdown("<hr class='thin'/>", unsafe_allow_html=True)
-
-# ══════════════════════════════════════════════════════════════════════════════
-# MODEL ACCURACY
-# ══════════════════════════════════════════════════════════════════════════════
-st.markdown("<div class='section-header'>How Accurate Is the Model?</div>", unsafe_allow_html=True)
-st.markdown(f"<div class='section-sub'>Single-fold validation — trained on 2020–{LATEST - 1}, "
-            f"tested on the held-out SY{LATEST} — per school × grade enrollment</div>",
-            unsafe_allow_html=True)
-
-acc1, acc2, acc3, acc4 = st.columns(4)
-accuracy_kpis = [
-    ("#4A90C4", f"{MODEL_MAE:.1f}",   "MAE (students)",
-     "Mean absolute error — the typical school-grade projection lands within ~8 students of actual."),
-    ("#003057", f"{MODEL_RMSE:.1f}",  "RMSE (students)",
-     "Root mean squared error — larger than MAE because a few big schools carry most of the error mass."),
-    ("#C8973A", f"{MODEL_R2:.2f}",    "R²",
-     f"The model explains {MODEL_R2:.0%} of the variance in school-grade enrollment on the unseen year."),
-    ("#8B5CF6", "100",                "Boosted trees",
-     "Depth-5 trees, learning rate 0.1, subsampling 0.8 — migrant-surge years down-weighted to 0.3."),
-]
-for col, (color, val, lbl, body) in zip([acc1, acc2, acc3, acc4], accuracy_kpis):
-    with col:
-        st.markdown(f"""
-        <div style='background:#FFFFFF; border:1px solid #D1DBE8; border-top:4px solid {color};
-                    border-radius:12px; padding:20px 18px; height:100%;
-                    box-shadow:0 1px 4px rgba(0,48,87,0.06);'>
-            <div style='font-size:2rem; font-weight:800; color:{color};'>{val}</div>
-            <div style='font-size:0.78rem; font-weight:700; color:#1E293B;
-                        text-transform:uppercase; letter-spacing:0.04em; margin-top:6px;'>{lbl}</div>
-            <div style='font-size:0.76rem; color:#64748B; margin-top:6px; line-height:1.5;'>{body}</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-st.markdown("<hr class='thin'/>", unsafe_allow_html=True)
-
-# ══════════════════════════════════════════════════════════════════════════════
-# CSR vs ML — leadership headline (review PDF, Sections 1–2)
-# ══════════════════════════════════════════════════════════════════════════════
-st.markdown("<div class='section-header'>ML vs the Current CSR Method</div>",
-            unsafe_allow_html=True)
-st.markdown("<div class='section-sub'>4-year out-of-sample walk-forward backtest, SY2023–2026 — "
-            "18,899 school-grade predictions across 842 open schools (model review document)</div>",
-            unsafe_allow_html=True)
-
-hl = pd.DataFrame(
-    [(metric, csr, ml) for metric, (csr, ml) in BACKTEST_HEADLINE.items()],
-    columns=["Headline metric (4-year backtest, district-wide)",
-             "CSR (current SAS)", "ML (proposed GBT)"],
-)
-st.dataframe(hl, hide_index=True, use_container_width=True)
-
-st.markdown("""
-<div class='insight-card'>
-    <div class='title'>📌 A ~4× reduction in district-wide forecast bias</div>
-    <div class='body'>The current SAS Cohort Survival Rate method over-predicted enrollment by
-    <b>+193,048 students (+27.3%)</b> across the backtest; the GBT model cuts that to
-    <b>−51,357 (−7.3%)</b> — slightly conservative instead of heavily over-budgeted. The budget
-    error rate (WAPE) falls from 71.4% to 24.7%, and the model wins on MAE in 21 of 23 networks,
-    in every backtest year, and in 78.9% of individual schools. At ~$6,200 per pupil
-    (FY26 Student-Based Budgeting base rate), that bias gap is the headline dollar number
-    for leadership.</div>
+    <div class='title'>📊 How the forecast is made — and how accurate it is</div>
+    <div class='body'>What the model leans on, its accuracy on held-out data, and the full
+    head-to-head against the old CSR method live on the <b>ML Model Intelligence</b> page
+    (Briefing section) — so this page can stay focused on the district's numbers.</div>
 </div>
 """, unsafe_allow_html=True)
 
