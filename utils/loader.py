@@ -35,6 +35,67 @@ NULL_FILL_COLS = [
     "SCHOOL_TOTAL_LAST_YEAR",
 ]
 
+# ── Entry-grade (K & 9) XGBoost model ─────────────────────────────────────────
+# The saved Spark GBT was never trained on K/9, so we score those two grades with
+# the dedicated XGBoost model from XGBoost_KG_Grade9_Training.ipynb. Feature list
+# and order must match that notebook exactly; NaNs are preserved (XGBoost handles
+# missing values natively, unlike the median-filled Spark path).
+XGB_MODEL_PATH = "xgb_model_all.pkl"
+ENTRY_GRADES = ("K", "9")
+XGB_FEATURES = [
+    "SAME_GRADE_LAST_YEAR", "SAME_GRADE_2YR_AGO", "FEEDER_GRADE_LAST_YEAR",
+    "FEEDER_GRADE_2YR_AGO", "HAS_FEEDER_GRADE", "SCHOOL_TOTAL_LAST_YEAR",
+    "COHORT_SURVIVAL_RATE", "AVG_SURVIVAL_RATE_3YR",
+    "DISTRICT_GRADE_ENROLLMENT_LAST_YEAR", "IS_MIGRANT_ANOMALY_YEAR",
+    "GRADE_NUMERIC", "SCHOOL_KEY", "GOVERNANCE_ENCODED", "IS_SELECTIVE",
+    "IS_ATTENDANCE_AREA", "IS_SMALL_SCHOOL", "IS_HIGH_SCHOOL", "REGION_ENCODED",
+]
+
+
+@st.cache_resource(show_spinner=False)
+def load_xgb_model():
+    """Load the saved XGBoost entry-grade model.
+
+    No fallback: if the model cannot be loaded (missing file, xgboost not
+    installed, etc.) the error propagates — K & 9 must be scored by this model.
+    """
+    import pickle
+    with open(XGB_MODEL_PATH, "rb") as fh:
+        return pickle.load(fh)
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def xgb_k9_forecast() -> dict:
+    """Next-year K & 9 predictions keyed by (SCHOOL_KEY, GRADE).
+
+    Built from the RAW CSV with NaNs preserved — exactly as the training notebook
+    feeds the model — never the median-filled forecast frame. No fallback: any
+    load/predict failure propagates as an error.
+    """
+    model = load_xgb_model()
+    raw = pd.read_csv(CSV_PATH)
+    raw["GRADE"] = raw["GRADE"].astype(str)
+    for c in XGB_FEATURES + ["SCHOOL_YEAR", "IS_SCHOOL_OPEN"]:
+        raw[c] = pd.to_numeric(raw[c], errors="coerce")
+    latest = int(raw["SCHOOL_YEAR"].max())
+    k9 = raw[(raw["SCHOOL_YEAR"] == latest) & (raw["IS_SCHOOL_OPEN"] == 1)
+             & (raw["GRADE"].isin(ENTRY_GRADES))].copy()
+    k9["IS_MIGRANT_ANOMALY_YEAR"] = 0
+    preds = np.clip(np.round(model.predict(k9[XGB_FEATURES]), 0), 0, None)
+    return {(int(s), g): float(p)
+            for s, g, p in zip(k9["SCHOOL_KEY"], k9["GRADE"], preds)}
+
+
+def xgb_predict_row(features: dict) -> float:
+    """Single K/9 prediction from the XGBoost model — used by the Custom School
+    Simulator. Any feature absent from ``features`` (e.g. SCHOOL_KEY for a
+    hypothetical school) is passed as NaN, which the model handles natively.
+    No fallback — load/predict errors propagate.
+    """
+    model = load_xgb_model()
+    X = pd.DataFrame([{c: features.get(c, np.nan) for c in XGB_FEATURES}])
+    return float(np.clip(np.round(model.predict(X)[0], 0), 0, None))
+
 GOV_LABELS = {
     "District": "District-run — traditional CPS neighbourhood and magnet schools.",
     "Charter":  "Independently operated, publicly funded schools with curriculum autonomy.",
@@ -93,7 +154,18 @@ def load_data() -> pd.DataFrame:
     df["REGION"] = df["REGION"].fillna(
         df["ANNUAL_REGIONAL_ANALYSIS_REGION"]).fillna("Unknown Region")
 
-    df["SCHOOL_LABEL"] = "School " + df["SCHOOL_KEY"].astype(int).astype(str)
+    # SCHOOL_LABEL — use a real school name if the export carries one, else fall
+    # back to "School <key>". Forward-compatible: names appear automatically once
+    # a name column is present in the CSV.
+    name_col = next((c for c in ["SCHOOL_NAME", "SCHOOL_LONG_NAME", "LONG_NAME",
+                                 "SCHOOL_NM", "NAME"] if c in df.columns), None)
+    fallback = "School " + df["SCHOOL_KEY"].astype(int).astype(str)
+    if name_col is not None:
+        nm = df[name_col].astype("string").str.strip()
+        df["SCHOOL_LABEL"] = nm.where(nm.notna() & (nm != "") & (nm.str.lower() != "nan"),
+                                      fallback)
+    else:
+        df["SCHOOL_LABEL"] = fallback
     return df
 
 
@@ -195,6 +267,17 @@ def build_forecast(_df: pd.DataFrame | None = None) -> pd.DataFrame:
     # Same train-only median fills the notebook applies before scoring (Section 14)
     fc[NULL_FILL_COLS] = fc[NULL_FILL_COLS].fillna(df.attrs["median_fills"])
     fc["FORECAST_ENROLLMENT"] = predict_rows(fc).round(0)
+
+    # K & 9 only: replace the Spark GBT value with the dedicated XGBoost model
+    # (all other grades keep the Spark GBT forecast). No fallback — a missing
+    # K/9 prediction raises KeyError rather than silently keeping the Spark value.
+    is_k9 = fc["GRADE"].astype(str).isin(ENTRY_GRADES)
+    if is_k9.any():
+        k9 = xgb_k9_forecast()
+        fc.loc[is_k9, "FORECAST_ENROLLMENT"] = [
+            k9[(int(s), str(g))] for s, g in zip(
+                fc.loc[is_k9, "SCHOOL_KEY"], fc.loc[is_k9, "GRADE"])]
+
     fc["FORECAST_YEAR"] = fyear
     return fc
 

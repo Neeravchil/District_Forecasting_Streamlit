@@ -70,9 +70,17 @@ if selected_network != ALL_NETWORKS_LABEL:
     # Only list schools that actually have a forecast (open this year); closed
     # schools have no history/projection and would otherwise error on selection.
     schools_in_network = (fc[fc["NETWORK"] == selected_network][["SCHOOL_KEY", "SCHOOL_LABEL"]]
-                          .drop_duplicates().sort_values("SCHOOL_KEY"))
+                          .drop_duplicates().sort_values("SCHOOL_LABEL"))
+    # Disambiguate any shared names, then map the chosen label back to its key
+    # (real school names don't end in their numeric key, so don't parse the string).
+    _dups = schools_in_network["SCHOOL_LABEL"].value_counts()
+    schools_in_network = schools_in_network.assign(_disp=[
+        f"{lbl} (#{int(k)})" if _dups.get(lbl, 0) > 1 else lbl
+        for lbl, k in zip(schools_in_network["SCHOOL_LABEL"], schools_in_network["SCHOOL_KEY"])])
+    label_to_key = dict(zip(schools_in_network["_disp"],
+                            schools_in_network["SCHOOL_KEY"].astype(int)))
     ALL_SCHOOLS_LABEL = f"All Schools — {selected_network}"
-    school_options = [ALL_SCHOOLS_LABEL] + schools_in_network["SCHOOL_LABEL"].tolist()
+    school_options = [ALL_SCHOOLS_LABEL] + schools_in_network["_disp"].tolist()
 
     st.markdown("<div class='section-header' style='margin-top:12px;'>"
                 "Step 2 — Choose a School</div>", unsafe_allow_html=True)
@@ -95,7 +103,7 @@ elif selected_school is None or selected_school == ALL_SCHOOLS_LABEL:
     scope_fc = fc[fc["NETWORK"] == selected_network].copy()
     scope_label, view_level = f"{selected_network} Network", "network"
 else:
-    key = int(selected_school.split()[-1])
+    key = int(label_to_key[selected_school])
     scope_df = reg_df[reg_df["SCHOOL_KEY"] == key].copy()
     scope_fc = fc[fc["SCHOOL_KEY"] == key].copy()
     scope_label, view_level = selected_school, "school"

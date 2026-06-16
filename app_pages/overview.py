@@ -151,20 +151,29 @@ st.markdown("<hr class='thin'/>", unsafe_allow_html=True)
 # ══════════════════════════════════════════════════════════════════════════════
 # 4 — GOOD TO KNOW  (caveats tucked into an expander to keep the page calm)
 # ══════════════════════════════════════════════════════════════════════════════
-grades_present = sorted(int(g) for g in fc["GRADE"].unique())
-with st.expander("ⓘ  What the forecast covers — and what it doesn't (Kindergarten, Grade 9, missing history)"):
+# Sort grades K→12 (string-safe — "K" can't be cast to int)
+_GRADE_ORDER = {"PK": 0, "K": 1, "1": 2, "2": 3, "3": 4, "4": 5, "5": 6, "6": 7,
+                "7": 8, "8": 9, "9": 10, "10": 11, "11": 12, "12": 13}
+grades_present = sorted({str(g) for g in fc["GRADE"].unique()},
+                        key=lambda g: _GRADE_ORDER.get(g, 99))
+entry_added = [g for g in ("K", "9") if g in grades_present]
+
+with st.expander("ⓘ  What the forecast covers — and what to keep in mind"):
     notes = [
-        ("Kindergarten isn't in the data yet",
-         f"The forecast covers grades {grades_present[0]}–{grades_present[-1]}. Kindergarten has no earlier "
-         "grade in the school to learn from — it depends mostly on births ~5 years earlier — so it needs its "
-         "own data source before we can project it."),
-        ("Grade 9 is missing too",
-         "Records jump from Grade 8 to Grade 10, so there's no Grade 9 to report on, and Grade 10's feeder "
-         "falls back to a sensible average."),
-        ("Where there's no history, we fill carefully",
-         "Entry grades and the Grade-9 gap get a typical value from past years, clearly marked as "
-         "&ldquo;no history available&rdquo; — never the number we're trying to predict."),
+        ("Grades covered",
+         f"The forecast now spans grades {grades_present[0]}–{grades_present[-1]} "
+         f"({len(grades_present)} grade levels across every open school)."),
     ]
+    if entry_added:
+        notes.append((
+            "Kindergarten & Grade 9 are newly included",
+            "These are entry grades — students arrive from outside the school, so there's no class below them "
+            "to learn from. Their projections lean more on school size and area, and should be treated as "
+            "<b>preliminary</b> until the model is retrained to include them."))
+    notes.append((
+        "Where there's no history, we fill carefully",
+        "Entry grades (and any first-year gap) get a typical value from past years, clearly marked as "
+        "&ldquo;no history available&rdquo; — never the number we're trying to predict."))
     for title, body in notes:
         st.markdown(f"<div style='margin-bottom:10px;'><b style='color:#003057;'>{title}.</b> "
                     f"<span style='color:#334D66; font-size:0.9rem;'>{body}</span></div>",

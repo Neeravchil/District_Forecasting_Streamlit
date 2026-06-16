@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 
-from utils.loader import load_data, latest_year
+from utils.loader import load_data, latest_year, xgb_predict_row, ENTRY_GRADES
 from utils.forecast import predict_rows, FEATURES, GRADE_IDX, GRADE_IDX_KEEP, MODEL_RMSE
 
 _LAYOUT = dict(
@@ -217,7 +217,11 @@ row = {
     "REGION_ENCODED": CTX["net_enc"].get(network, 0),
     "GRADE_idx": GRADE_IDX.get(str(grade), GRADE_IDX_KEEP),
 }
-forecast = float(predict_rows(pd.DataFrame([row]))[0])
+# K & 9 are scored by the dedicated XGBoost model; all other grades by the Spark GBT.
+if str(grade) in ENTRY_GRADES:
+    forecast = xgb_predict_row(row)
+else:
+    forecast = float(predict_rows(pd.DataFrame([row]))[0])
 change = forecast - same_last
 change_pct = (change / same_last * 100) if same_last else 0.0
 change_clr = "#22C55E" if change >= 0 else "#EF4444"
