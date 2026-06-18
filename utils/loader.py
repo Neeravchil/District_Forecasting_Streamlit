@@ -273,14 +273,23 @@ def build_forecast(_df: pd.DataFrame | None = None) -> pd.DataFrame:
         })
 
     fc = pd.DataFrame(rows)
-    # Same train-only median fills the notebook applies before scoring (Section 14)
-    fc[NULL_FILL_COLS] = fc[NULL_FILL_COLS].fillna(df.attrs["median_fills"])
-    fc["FORECAST_ENROLLMENT"] = predict_rows(fc).round(0)
-
-    # K & 9 only: replace the Spark GBT value with the dedicated XGBoost model
-    # (all other grades keep the Spark GBT forecast). No fallback — a missing
-    # K/9 prediction raises KeyError rather than silently keeping the Spark value.
+    fc["FORECAST_ENROLLMENT"] = np.nan
     is_k9 = fc["GRADE"].astype(str).isin(ENTRY_GRADES)
+
+    # ── Continuing grades (1–8, 10–12) → Spark GBT ───────────────────────────
+    # Apply the notebook's train-only median fills (Section 14) before scoring.
+    # K & 9 are deliberately excluded so their feeder is never median-filled.
+    cont = ~is_k9
+    if cont.any():
+        cont_df = fc.loc[cont].copy()
+        cont_df[NULL_FILL_COLS] = cont_df[NULL_FILL_COLS].fillna(df.attrs["median_fills"])
+        fc.loc[cont, "FORECAST_ENROLLMENT"] = predict_rows(cont_df).round(0)
+
+    # ── Entry grades K & 9 → dedicated XGBoost model ─────────────────────────
+    # Scored from the raw feature table with the REAL feeder kept (Pre-K → K,
+    # Grade 8 → Grade 9) and nulls preserved — never median-filled — exactly as
+    # XGBoost_KG_Grade9_Training.ipynb. No fallback: a missing K/9 prediction
+    # raises KeyError rather than silently falling back to the GBT.
     if is_k9.any():
         k9 = xgb_k9_forecast()
         fc.loc[is_k9, "FORECAST_ENROLLMENT"] = [
