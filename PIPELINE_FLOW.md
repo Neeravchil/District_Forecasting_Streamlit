@@ -62,7 +62,10 @@ them, and prints the **combined system vs CSR**:
 | **MAPE / MedAPE** | average / typical **% error** |
 | **R²** | share of the ups-and-downs explained |
 
-(`val_summary` holds the table.) Feature importance and the CSR baseline also live here.
+(`val_summary` holds the table.) This stage also includes a **K & 9 head-to-head**
+— the all-grades **GBT** vs the dedicated **XGBoost**, scored on the same held-out
+K/9 rows (MAE/MAPE/MedAPE table + chart) — which is *why* the forecast overwrites
+K/9 with XGBoost. Feature importance and the CSR baseline also live here.
 
 ## Stage 4 — Year-wise backtest (walk-forward)
 
