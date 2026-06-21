@@ -17,6 +17,13 @@ import streamlit as st
 
 from utils.forecast import GRADE_IDX, GRADE_IDX_KEEP, FEATURES, predict_rows
 
+# ── Business-impact assumptions (Student-Based Budgeting) ─────────────────────
+PER_PUPIL_SBB = 6200    # FY26 SBB base allocation per projected pupil ($)
+# The current method = cohort-survival ratio. Raw 3-yr survival ratios spike to
+# 100x+ when a feeder grade is near zero — projections no real method would make —
+# so we hold them to a plausible ceiling for a fair, credible baseline.
+SURVIVAL_CAP = 1.5
+
 CSV_PATH = "CPS_Enrollment_Forecasting.csv"
 # Per-school display metadata (NETWORK, governance, region, community), merged in
 # when the model CSV omits it — so network-level views work after a re-export.
@@ -397,6 +404,37 @@ def model_vs_baseline(_df: pd.DataFrame | None = None) -> dict:
         out[key] = {"label": label, "help": help_, "fmt": fmt, "baseline": b, "model": m,
                     "improvement": ((b - m) / b * 100) if b else float("nan")}
     return out
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def business_impact(_df: pd.DataFrame | None = None) -> dict:
+    """Dollar value of the model on the held-out year: how much enrollment-driven
+    budget it re-targets vs the current cohort-survival method. This is allocation
+    accuracy — funding reaching the right schools — not new revenue. Recomputed
+    live, so it stays correct when the model or data changes.
+    """
+    df = load_data() if _df is None else _df
+    val = latest_year(df)
+    v = df[(df["SCHOOL_YEAR"] == val) & (df["ENROLLMENT"] > 0)].copy()
+    actual = v["ENROLLMENT"].to_numpy(float)
+    model = np.asarray(predict_rows(v), float)
+    current = (v["FEEDER_GRADE_LAST_YEAR"]
+               * v["AVG_SURVIVAL_RATE_3YR"].fillna(1.0).clip(upper=SURVIVAL_CAP)).to_numpy(float)
+
+    cur_students = float(np.abs(current - actual).sum())   # total mis-forecast (over+under)
+    mdl_students = float(np.abs(model - actual).sum())
+    n = len(v)
+    return {
+        "year": int(val), "n": int(n), "per_pupil": PER_PUPIL_SBB,
+        "actual_total": float(actual.sum()),
+        "cur_students": cur_students, "mdl_students": mdl_students,
+        "saved_students": cur_students - mdl_students,
+        "cur_dollars": cur_students * PER_PUPIL_SBB,
+        "mdl_dollars": mdl_students * PER_PUPIL_SBB,
+        "saved_dollars": (cur_students - mdl_students) * PER_PUPIL_SBB,
+        "cur_mae": cur_students / n, "mdl_mae": mdl_students / n,
+        "accuracy_x": (cur_students / mdl_students) if mdl_students else float("nan"),
+    }
 
 
 @st.cache_data(ttl=3600, show_spinner=False)

@@ -177,11 +177,6 @@ with col_r:
                      index=1 if str(grade) in {"10", "11", "12"} else 0,
                      horizontal=True, key="cf_hs", label_visibility="collapsed")
 
-    st.markdown("**Selective enrollment?**", unsafe_allow_html=True)
-    is_sel = st.radio("selective", options=["No", "Yes"], index=0, horizontal=True,
-                      key="cf_sel", label_visibility="collapsed",
-                      help="Selective-enrollment schools admit by application/exam.")
-
 st.markdown("<hr class='thin'/>", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
