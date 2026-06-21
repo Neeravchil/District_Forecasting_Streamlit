@@ -1,0 +1,924 @@
+SCHOOL_KEY,NETWORK,GOVERNANCE,ANNUAL_REGIONAL_ANALYSIS_REGION,COMMUNITY,REGION_ENCODED
+1,,,,,0
+2,,District,,,0
+3,,,,,0
+5,TASSEL,District,,,0
+18,,,,,0
+25,,,,,0
+54,,,,,0
+55,,,,,0
+67,,,,,0
+121,,,,,0
+122,,,,,0
+147,,,,,0
+166,,,,,0
+169,,,,,0
+194,,,,,0
+204,,,,,0
+232,,,,,0
+248,,,,,0
+289,,,,,0
+290,,,,,0
+368,,,,,0
+376,,,,,0
+385,,,,,0
+388,,,,,0
+396,,,,,0
+402,,,,,0
+407,,,,,0
+414,,,,,0
+418,,,,,0
+422,,,,,0
+439,,,,,0
+466,,,,,0
+479,,,,,0
+545,,,,,0
+553,Charter,Charter,Greater Midway,GARFIELD RIDGE,9
+555,Charter,Charter,West Side,EAST GARFIELD PARK,2
+557,Charter,Charter,Greater Milwaukee Avenue,AVONDALE,13
+559,Charter,Charter,Northwest Side,ALBANY PARK,4
+563,Charter,Charter,West Side,AUSTIN,2
+564,Contract,Contract,Greater Milwaukee Avenue,WEST TOWN,13
+565,Charter,Charter,Greater Stony Island,AVALON PARK,7
+566,Charter,Charter,South Side,NEW CITY,1
+567,Charter,Charter,Greater Milwaukee Avenue,LOGAN SQUARE,13
+568,Charter,Charter,South Side,WASHINGTON HEIGHTS,1
+569,Charter,Charter,Northwest Side,IRVING PARK,4
+570,Charter,Charter,Greater Calumet,WEST PULLMAN,8
+571,Charter,Charter,Bronzeville / South Lakefront,WASHINGTON PARK,6
+572,Charter,Charter,Far Northwest Side,BELMONT CRAGIN,5
+573,Charter,Charter,South Side,ASHBURN,1
+574,Charter,Charter,South Side,AUBURN GRESHAM,1
+575,Charter,Charter,South Side,WASHINGTON HEIGHTS,1
+576,Charter,Charter,Northwest Side,NORTH PARK,4
+577,Charter,Charter,North Lakefront,ROGERS PARK,3
+578,Charter,Charter,,,0
+581,Charter,Charter,Greater Milwaukee Avenue,WEST TOWN,13
+582,Charter,Charter,,,0
+585,Contract,Contract,,,0
+586,Charter,Charter,West Side,NORTH LAWNDALE,2
+588,Charter,Charter,West Side,NORTH LAWNDALE,2
+589,Charter,Charter,West Side,EAST GARFIELD PARK,2
+590,Charter,Charter,West Side,EAST GARFIELD PARK,2
+591,Charter,Charter,West Side,NORTH LAWNDALE,2
+592,Charter,Charter,Greater Stockyards,MCKINLEY PARK,10
+593,Charter,Charter,Greater Milwaukee Avenue,WEST TOWN,13
+594,Charter,Charter,Greater Stony Island,GREATER GRAND CROSSING,7
+595,Charter,Charter,Greater Milwaukee Avenue,WEST TOWN,13
+596,Charter,Charter,Far Northwest Side,HERMOSA,5
+597,Charter,Charter,Greater Milwaukee Avenue,WEST TOWN,13
+598,Charter,Charter,West Side,HUMBOLDT PARK,2
+599,Charter,Charter,Near West Side,NEAR WEST SIDE,12
+600,Charter,Charter,West Side,NORTH LAWNDALE,2
+601,Charter,Charter,West Side,NORTH LAWNDALE,2
+602,Charter,Charter,North Lakefront,EDGEWATER,3
+603,Charter,Charter,South Side,CHATHAM,1
+604,Charter,Charter,South Side,CHATHAM,1
+605,Charter,Charter,Central Area,NEAR SOUTH SIDE,0
+606,Charter,Charter,Bronzeville / South Lakefront,DOUGLAS,6
+608,Contract,Contract,West Side,AUSTIN,2
+609,Charter,Charter,West Side,HUMBOLDT PARK,2
+611,Charter,Charter,South Side,WEST ENGLEWOOD,1
+615,Charter,Charter,Bronzeville / South Lakefront,OAKLAND,6
+616,Charter,Charter,Bronzeville / South Lakefront,KENWOOD,6
+617,Charter,Charter,Bronzeville / South Lakefront,WOODLAWN,6
+619,Charter,Charter,Greater Midway,ARCHER HEIGHTS,9
+620,Charter,Charter,Greater Midway,ARCHER HEIGHTS,9
+621,Charter,Charter,Pilsen / Little Village,LOWER WEST SIDE,11
+622,Charter,Charter,Northwest Side,AVONDALE,4
+623,Charter,Charter,Pilsen / Little Village,SOUTH LAWNDALE,11
+624,Charter,Charter,Greater Midway,GAGE PARK,9
+625,Charter,Charter,Greater Midway,ARCHER HEIGHTS,9
+626,Charter,Charter,South Side,ENGLEWOOD,1
+628,Charter,Charter,Greater Stockyards,BRIGHTON PARK,10
+630,Contract,Contract,Near West Side,NEAR WEST SIDE,12
+631,Charter,Charter,Greater Calumet,RIVERDALE,8
+633,Charter,Charter,Greater Stony Island,SOUTH CHICAGO,7
+635,Charter,Charter,Greater Milwaukee Avenue,WEST TOWN,13
+636,Charter,Charter,Near West Side,NEAR WEST SIDE,12
+637,Charter,Charter,Central Area,LOOP,0
+639,Charter,Charter,Greater Stockyards,BRIGHTON PARK,10
+642,Charter,Charter,Pilsen / Little Village,LOWER WEST SIDE,11
+643,Charter,Charter,Bronzeville / South Lakefront,DOUGLAS,6
+644,Charter,Charter,South Side,ENGLEWOOD,1
+645,Charter,Charter,Greater Stony Island,SOUTH CHICAGO,7
+648,Charter,Charter,South Side,AUBURN GRESHAM,1
+649,Charter,Charter,Greater Midway,GAGE PARK,9
+650,Charter,Charter,,,0
+651,Charter,Charter,Greater Milwaukee Avenue,WEST TOWN,13
+652,Charter,Charter,Greater Midway,CHICAGO LAWN,9
+653,Charter,Charter,South Side,WEST ENGLEWOOD,1
+654,Charter,Charter,South Side,AUBURN GRESHAM,1
+655,Charter,Charter,West Side,NORTH LAWNDALE,2
+656,Charter,Charter,West Side,WEST GARFIELD PARK,2
+657,Charter,Charter,Far Northwest Side,BELMONT CRAGIN,5
+658,Charter,Charter,Northwest Side,WEST RIDGE,4
+660,Options,Charter,West Side,AUSTIN,2
+661,Options,Charter,Bronzeville / South Lakefront,DOUGLAS,6
+662,Options,Charter,Greater Milwaukee Avenue,AVONDALE,13
+663,Options,Charter,Greater Milwaukee Avenue,HUMBOLDT PARK,13
+664,Options,Charter,,,0
+665,Options,Charter,West Side,NORTH LAWNDALE,2
+666,Options,Charter,Bronzeville / South Lakefront,GREATER GRAND CROSSING,6
+667,Options,Charter,South Side,AUBURN GRESHAM,1
+668,Options,Charter,Greater Milwaukee Avenue,WEST TOWN,13
+670,Options,Charter,Central Area,LOOP,0
+671,Options,Charter,,,0
+672,Options,Charter,Pilsen / Little Village,SOUTH LAWNDALE,11
+673,Options,Charter,Greater Calumet,PULLMAN,8
+674,Options,Contract,,,0
+675,Options,Charter,Greater Stony Island,AVALON PARK,7
+677,Options,Charter,North Lakefront,UPTOWN,3
+679,Options,Charter,West Side,HUMBOLDT PARK,2
+680,Options,Charter,West Side,AUSTIN,2
+681,Options,Charter,Greater Midway,ARCHER HEIGHTS,9
+682,Charter,Charter,West Side,AUSTIN,2
+683,Options,Contract,Greater Calumet,MORGAN PARK,8
+685,Charter,Charter,Greater Midway,GAGE PARK,9
+686,Options,Charter,Greater Stony Island,CHATHAM,7
+687,Charter,Charter,West Side,EAST GARFIELD PARK,2
+689,Charter,Charter,Greater Stockyards,BRIGHTON PARK,10
+692,Charter,Charter,Greater Calumet,PULLMAN,8
+693,Charter,Charter,Greater Stony Island,SOUTH CHICAGO,7
+695,Charter,Charter,Far Northwest Side,BELMONT CRAGIN,5
+697,Charter,Charter,Greater Calumet,WEST PULLMAN,8
+698,Charter,Charter,Far Northwest Side,IRVING PARK,5
+699,Charter,Charter,South Side,ENGLEWOOD,1
+700,Options,Charter,Pilsen / Little Village,LOWER WEST SIDE,11
+701,Charter,Charter,West Side,EAST GARFIELD PARK,2
+703,Charter,Charter,Greater Midway,GAGE PARK,9
+704,Charter,Charter,Greater Stony Island,SOUTH CHICAGO,7
+705,Charter,Charter,Far Northwest Side,BELMONT CRAGIN,5
+706,Charter,Charter,Greater Lincoln Park,NEAR NORTH SIDE,14
+707,Charter,Charter,,,0
+708,Charter,Charter,Greater Milwaukee Avenue,AVONDALE,13
+709,Options,ALOP,Greater Stockyards,BRIGHTON PARK,10
+711,Options,Contract,Greater Stony Island,SOUTH SHORE,7
+712,Options,Contract,Greater Midway,CHICAGO LAWN,9
+714,Charter,Charter,West Side,AUSTIN,2
+715,Charter,Charter,Greater Stockyards,BRIGHTON PARK,10
+716,Charter,Charter,West Side,HUMBOLDT PARK,2
+717,Charter,Charter,Greater Stony Island,SOUTH SHORE,7
+718,Charter,Charter,Greater Midway,CHICAGO LAWN,9
+1002,Network 17,District,Greater Stony Island,AVALON PARK,7
+1004,Network 17,District,Bronzeville / South Lakefront,DOUGLAS,6
+1005,Network 15,District,Central Area,LOOP,0
+1006,Network 15,District,Far Northwest Side,BELMONT CRAGIN,5
+1007,Network 15,District,Central Area,NEAR NORTH SIDE,0
+1009,Network 16,District,South Side,NEW CITY,1
+1012,Network 15,District,West Side,HUMBOLDT PARK,2
+1013,Network 17,District,South Side,CHATHAM,1
+1014,Network 15,District,West Side,HUMBOLDT PARK,2
+1015,Network 15,District,Greater Midway,CLEARING,9
+1016,Network 14,District,Northwest Side,LINCOLN SQUARE,4
+1018,Network 16,District,Greater Midway,ASHBURN,9
+1023,Network 16,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1024,Network 17,District,Greater Calumet,ROSELAND,8
+1027,Network 14,District,Far Northwest Side,PORTAGE PARK,5
+1028,Network 16,District,Greater Midway,GAGE PARK,9
+1029,Network 17,District,Greater Stony Island,ROSELAND,7
+1030,Network 16,District,,,0
+1031,Network 17,District,Greater Stony Island,GREATER GRAND CROSSING,7
+1032,Network 17,District,Bronzeville / South Lakefront,WOODLAWN,6
+1033,Network 16,District,Greater Stockyards,BRIGHTON PARK,10
+1034,Network 14,District,Far Northwest Side,HERMOSA,5
+1035,Network 16,District,Greater Midway,GARFIELD RIDGE,9
+1036,Network 14,District,North Lakefront,LAKE VIEW,3
+1037,Network 14,District,Northwest Side,NORTH CENTER,4
+1039,Network 15,District,West Side,EAST GARFIELD PARK,2
+1040,Network 15,District,West Side,EAST GARFIELD PARK,2
+1041,Network 14,District,Northwest Side,WEST RIDGE,4
+1042,Network 16,District,Far Southwest Side,MORGAN PARK,0
+1043,ISP,District,Greater Calumet,ROSELAND,8
+1044,Network 17,District,Bronzeville / South Lakefront,DOUGLAS,6
+1045,Network 14,District,Northwest Side,ALBANY PARK,4
+1046,Network 14,District,Far Northwest Side,IRVING PARK,5
+1047,Network 14,District,North Lakefront,EDGEWATER,3
+1048,Network 14,District,Far Northwest Side,BELMONT CRAGIN,5
+1049,Network 14,District,North Lakefront,ROGERS PARK,3
+1050,Network 14,District,Far Northwest Side,NORWOOD PARK,5
+1051,Network 16,District,Greater Stockyards,NEW CITY,10
+1053,Network 14,District,Northwest Side,NORTH PARK,4
+1054,Network 14,District,Greater Lincoln Park,LINCOLN PARK,14
+1055,Network 17,District,Greater Calumet,EAST SIDE,8
+1056,Network 15,District,Greater Milwaukee Avenue,WEST TOWN,13
+1057,Network 16,District,Greater Midway,WEST LAWN,9
+1060,Network 14,District,Northwest Side,NORTH PARK,4
+1061,Network 16,District,South Side,WEST ENGLEWOOD,1
+1062,Network 17,District,Bronzeville / South Lakefront,KENWOOD,6
+1064,Options,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1065,Network 14,District,Northwest Side,NORTH PARK,4
+1066,Options,District,Near West Side,NEAR WEST SIDE,12
+1067,Network 17,District,Bronzeville / South Lakefront,KENWOOD,6
+1068,ISP,District,Far Southwest Side,MOUNT GREENWOOD,0
+1069,Network 17,District,Bronzeville / South Lakefront,DOUGLAS,6
+1070,Network 15,District,Near West Side,NEAR WEST SIDE,12
+1071,Network 15,District,Greater Midway,ARCHER HEIGHTS,9
+1072,Network 15,District,Greater Milwaukee Avenue,WEST TOWN,13
+1073,Network 17,District,Greater Calumet,RIVERDALE,8
+1074,Network 17,District,Greater Calumet,PULLMAN,8
+1075,Network 16,District,Greater Calumet,WASHINGTON HEIGHTS,8
+1077,Network 15,District,Pilsen / Little Village,LOWER WEST SIDE,11
+1079,Network 14,District,Far Northwest Side,PORTAGE PARK,5
+1082,Network 14,District,Central Area,NEAR SOUTH SIDE,0
+1085,Network 13,District,Greater Calumet,EAST SIDE,8
+1086,Network 4,District,Greater Lincoln Park,LAKE VIEW,14
+1087,Network 4,District,Greater Lincoln Park,LINCOLN PARK,14
+1090,Network 6,District,Greater Stockyards,BRIDGEPORT,10
+1091,ISP,District,Northwest Side,WEST RIDGE,4
+1092,Network 14,District,Greater Milwaukee Avenue,LOGAN SQUARE,13
+1094,Network 4,District,Northwest Side,NORTH CENTER,4
+1095,Options,District,Near West Side,NEAR WEST SIDE,12
+1096,Network 12,District,Greater Stony Island,AVALON PARK,7
+1098,Network 10,District,Far Southwest Side,BEVERLY,0
+1099,Network 4,District,Far Northwest Side,HERMOSA,5
+1100,Network 11,District,South Side,AUBURN GRESHAM,1
+1101,Network 11,District,South Side,ENGLEWOOD,1
+1102,Network 1,District,Northwest Side,IRVING PARK,4
+1103,Network 11,District,South Side,ENGLEWOOD,1
+1104,Network 1,District,Northwest Side,ALBANY PARK,4
+1105,ISP,District,West Side,AUSTIN,2
+1106,Network 1,District,Far Northwest Side,JEFFERSON PARK,5
+1107,Network 5,District,West Side,EAST GARFIELD PARK,2
+1108,Network 1,District,Northwest Side,IRVING PARK,4
+1109,Network 4,District,Northwest Side,NORTH CENTER,4
+1110,Network 13,District,Greater Calumet,ROSELAND,8
+1111,Network 4,District,Greater Lincoln Park,LAKE VIEW,14
+1112,Network 2,District,Northwest Side,WEST RIDGE,4
+1113,Network 11,District,South Side,AUBURN GRESHAM,1
+1114,Network 12,District,Greater Stony Island,SOUTH SHORE,7
+1115,Network 10,District,Greater Midway,ASHBURN,9
+1116,Network 13,District,Greater Calumet,ROSELAND,8
+1117,Network 4,District,Greater Milwaukee Avenue,LOGAN SQUARE,13
+1118,Network 1,District,Far Northwest Side,DUNNING,5
+1119,Network 13,District,Greater Calumet,SOUTH DEERING,8
+1120,Network 6,District,Near West Side,NEAR WEST SIDE,12
+1121,Network 12,District,Greater Stony Island,GREATER GRAND CROSSING,7
+1122,Network 12,District,Greater Stony Island,SOUTH SHORE,7
+1123,ISP,District,Northwest Side,LINCOLN SQUARE,4
+1124,Network 3,District,Far Northwest Side,BELMONT CRAGIN,5
+1125,Network 9,District,Bronzeville / South Lakefront,WASHINGTON PARK,6
+1126,Network 4,District,Greater Lincoln Park,LAKE VIEW,14
+1127,Network 13,District,Greater Stony Island,SOUTH DEERING,7
+1130,Network 12,District,Greater Stony Island,CHATHAM,7
+1131,Network 6,District,Greater Milwaukee Avenue,WEST TOWN,13
+1132,Network 8,District,Greater Stockyards,BRIGHTON PARK,10
+1133,Network 3,District,West Side,AUSTIN,2
+1134,Network 10,District,Greater Midway,GARFIELD RIDGE,9
+1135,ISP,District,Greater Stony Island,AVALON PARK,7
+1136,ISP,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1137,Network 5,District,West Side,HUMBOLDT PARK,2
+1138,Network 1,District,Far Northwest Side,DUNNING,5
+1139,Network 9,District,Bronzeville / South Lakefront,WOODLAWN,6
+1141,Network 10,District,South Side,ASHBURN,1
+1142,ISP,District,Greater Midway,GAGE PARK,9
+1143,Network 9,District,Bronzeville / South Lakefront,WASHINGTON PARK,6
+1144,Network 13,District,Greater Calumet,RIVERDALE,8
+1146,Network 13,District,Greater Calumet,RIVERDALE,8
+1147,ISP,District,Far Southwest Side,MOUNT GREENWOOD,0
+1148,Network 4,District,Greater Lincoln Park,LAKE VIEW,14
+1149,Network 5,District,West Side,NORTH LAWNDALE,2
+1150,Network 2,District,Northwest Side,LINCOLN SQUARE,4
+1151,Network 4,District,Greater Milwaukee Avenue,LOGAN SQUARE,13
+1152,Network 5,District,Greater Milwaukee Avenue,WEST TOWN,13
+1153,Network 8,District,Greater Midway,GAGE PARK,9
+1154,Network 13,District,Greater Calumet,HEGEWISCH,8
+1155,Network 1,District,Northwest Side,IRVING PARK,4
+1156,ISP,District,Northwest Side,WEST RIDGE,4
+1157,Network 10,District,Far Southwest Side,MORGAN PARK,0
+1158,Network 12,District,Greater Stony Island,SOUTH CHICAGO,7
+1159,ISP,District,Greater Milwaukee Avenue,WEST TOWN,13
+1160,Network 11,District,South Side,AUBURN GRESHAM,1
+1161,Network 2,District,Northwest Side,ROGERS PARK,4
+1162,Network 2,District,Northwest Side,NORTH CENTER,4
+1163,Network 7,District,Pilsen / Little Village,LOWER WEST SIDE,11
+1164,Network 11,District,South Side,WEST ENGLEWOOD,1
+1165,Network 7,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1166,Network 10,District,Far Southwest Side,MORGAN PARK,0
+1167,Network 7,District,Pilsen / Little Village,LOWER WEST SIDE,11
+1168,Network 5,District,West Side,NORTH LAWNDALE,2
+1169,Network 1,District,Far Northwest Side,OHARE,5
+1170,Network 4,District,Greater Milwaukee Avenue,LOGAN SQUARE,13
+1171,Network 8,District,Greater Stockyards,BRIGHTON PARK,10
+1172,Network 10,District,Greater Midway,ASHBURN,9
+1173,Network 2,District,Northwest Side,WEST RIDGE,4
+1175,Network 12,District,Greater Stony Island,GREATER GRAND CROSSING,7
+1176,Network 1,District,Far Northwest Side,DUNNING,5
+1177,Network 8,District,South Side,NEW CITY,1
+1178,Network 12,District,Greater Stony Island,CHATHAM,7
+1181,Network 9,District,Bronzeville / South Lakefront,DOUGLAS,6
+1182,Network 10,District,Greater Midway,CLEARING,9
+1183,Network 9,District,Bronzeville / South Lakefront,DOUGLAS,6
+1184,Network 11,District,South Side,ROSELAND,1
+1185,Network 6,District,Greater Milwaukee Avenue,LOGAN SQUARE,13
+1186,Network 11,District,South Side,WEST ENGLEWOOD,1
+1187,Network 10,District,Greater Midway,CHICAGO LAWN,9
+1188,Network 1,District,Far Northwest Side,EDISON PARK,5
+1189,Network 13,District,Greater Calumet,ROSELAND,8
+1190,Network 1,District,Far Northwest Side,FOREST GLEN,5
+1191,Network 13,District,Greater Calumet,WEST PULLMAN,8
+1192,Network 8,District,Greater Midway,ARCHER HEIGHTS,9
+1193,Network 3,District,West Side,AUSTIN,2
+1195,Network 5,District,West Side,EAST GARFIELD PARK,2
+1196,Network 10,District,Far Southwest Side,MORGAN PARK,0
+1197,ISP,District,Greater Stockyards,MCKINLEY PARK,10
+1198,Network 3,District,Far Northwest Side,BELMONT CRAGIN,5
+1199,Network 1,District,Far Northwest Side,JEFFERSON PARK,5
+1204,Network 13,District,Greater Calumet,WASHINGTON HEIGHTS,8
+1205,Network 2,District,North Lakefront,ROGERS PARK,3
+1206,Network 9,District,Bronzeville / South Lakefront,WOODLAWN,6
+1207,Network 7,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1208,Network 7,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1209,Network 3,District,Far Northwest Side,BELMONT CRAGIN,5
+1210,Network 11,District,South Side,WASHINGTON HEIGHTS,1
+1211,Network 5,District,West Side,EAST GARFIELD PARK,2
+1212,Network 4,District,Greater Lincoln Park,NEAR NORTH SIDE,14
+1213,Network 11,District,South Side,AUBURN GRESHAM,1
+1214,Network 9,District,Bronzeville / South Lakefront,GRAND BOULEVARD,6
+1215,Network 8,District,South Side,NEW CITY,1
+1216,Network 4,District,Greater Milwaukee Avenue,LOGAN SQUARE,13
+1218,Network 2,District,North Lakefront,ROGERS PARK,3
+1219,Network 13,District,Greater Calumet,EAST SIDE,8
+1220,Network 1,District,Far Northwest Side,NORWOOD PARK,5
+1221,Network 7,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1222,Network 12,District,Greater Stony Island,ROSELAND,7
+1224,Network 11,District,South Side,WEST ENGLEWOOD,1
+1225,Network 4,District,Greater Milwaukee Avenue,LOGAN SQUARE,13
+1226,Network 13,District,Greater Calumet,WEST PULLMAN,8
+1227,Network 13,District,Greater Calumet,HEGEWISCH,8
+1228,Network 2,District,North Lakefront,UPTOWN,3
+1229,Network 6,District,Greater Stockyards,NEW CITY,10
+1231,Network 1,District,Far Northwest Side,PORTAGE PARK,5
+1232,Network 7,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1233,Network 9,District,Bronzeville / South Lakefront,KENWOOD,6
+1234,Network 8,District,Greater Stockyards,MCKINLEY PARK,10
+1235,Network 5,District,West Side,EAST GARFIELD PARK,2
+1236,Network 11,District,South Side,AUBURN GRESHAM,1
+1237,Network 10,District,Greater Midway,CLEARING,9
+1238,Network 8,District,Greater Stockyards,BRIGHTON PARK,10
+1239,Network 6,District,Central Area,ARMOUR SQUARE,0
+1240,Network 10,District,Greater Midway,CLEARING,9
+1241,Network 12,District,Greater Stony Island,SOUTH CHICAGO,7
+1242,Network 4,District,Greater Lincoln Park,LAKE VIEW,14
+1243,Network 8,District,Greater Stockyards,NEW CITY,10
+1244,Network 7,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1245,Network 7,District,Pilsen / Little Village,LOWER WEST SIDE,11
+1246,Network 4,District,Far Northwest Side,HERMOSA,5
+1247,Network 9,District,Bronzeville / South Lakefront,HYDE PARK,6
+1248,Network 11,District,South Side,GREATER GRAND CROSSING,1
+1249,ISP,District,Northwest Side,ALBANY PARK,4
+1250,Network 7,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1251,Network 4,District,Greater Lincoln Park,LAKE VIEW,14
+1252,Network 3,District,West Side,AUSTIN,2
+1253,Network 2,District,North Lakefront,EDGEWATER,3
+1254,Network 9,District,Bronzeville / South Lakefront,WOODLAWN,6
+1255,Network 13,District,Greater Calumet,PULLMAN,8
+1256,Network 6,District,Greater Stockyards,BRIDGEPORT,10
+1257,Network 10,District,Greater Midway,GARFIELD RIDGE,9
+1258,Network 8,District,Greater Stockyards,NEW CITY,10
+1259,Network 5,District,West Side,WEST GARFIELD PARK,2
+1260,Network 8,District,South Side,WEST ENGLEWOOD,1
+1261,Network 9,District,Greater Stockyards,FULLER PARK,10
+1262,Network 1,District,Northwest Side,IRVING PARK,4
+1264,ISP,District,Central Area,NEAR SOUTH SIDE,0
+1265,Network 7,District,West Side,NORTH LAWNDALE,2
+1266,ISP,District,Greater Stockyards,NEW CITY,10
+1267,Network 1,District,Northwest Side,ALBANY PARK,4
+1268,Network 1,District,Far Northwest Side,NORWOOD PARK,5
+1269,ISP,District,Greater Stockyards,BRIDGEPORT,10
+1270,Network 8,District,South Side,ENGLEWOOD,1
+1272,Network 3,District,West Side,AUSTIN,2
+1274,Network 12,District,Greater Stony Island,CALUMET HEIGHTS,7
+1275,Network 11,District,South Side,AUBURN GRESHAM,1
+1276,Network 13,District,Greater Calumet,ROSELAND,8
+1277,Network 7,District,West Side,NORTH LAWNDALE,2
+1278,Network 10,District,Greater Midway,WEST LAWN,9
+1279,Network 6,District,Near West Side,NEAR WEST SIDE,12
+1280,Network 4,District,Northwest Side,NORTH CENTER,4
+1281,Network 2,District,Northwest Side,WEST RIDGE,4
+1283,Network 7,District,Pilsen / Little Village,LOWER WEST SIDE,11
+1284,ISP,District,Pilsen / Little Village,LOWER WEST SIDE,11
+1285,Network 10,District,Far Southwest Side,BEVERLY,0
+1286,Network 7,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1288,Network 11,District,South Side,ENGLEWOOD,1
+1290,Network 5,District,Greater Milwaukee Avenue,HUMBOLDT PARK,13
+1291,Network 2,District,North Lakefront,ROGERS PARK,3
+1293,ISP,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1294,Network 10,District,Greater Midway,GARFIELD RIDGE,9
+1295,Network 11,District,South Side,WASHINGTON HEIGHTS,1
+1297,Network 6,District,Greater Milwaukee Avenue,WEST TOWN,13
+1298,Network 9,District,Bronzeville / South Lakefront,HYDE PARK,6
+1300,Network 11,District,South Side,WASHINGTON HEIGHTS,1
+1301,Network 4,District,Greater Lincoln Park,LINCOLN PARK,14
+1302,Network 5,District,West Side,NORTH LAWNDALE,2
+1304,Network 3,District,West Side,AUSTIN,2
+1305,Network 8,District,South Side,NEW CITY,1
+1306,Network 4,District,Greater Lincoln Park,LINCOLN PARK,14
+1307,Network 4,District,Northwest Side,AVONDALE,4
+1308,Network 3,District,Far Northwest Side,BELMONT CRAGIN,5
+1309,Network 3,District,Far Northwest Side,MONTCLARE,5
+1311,Network 3,District,West Side,AUSTIN,2
+1312,Network 5,District,Greater Milwaukee Avenue,HUMBOLDT PARK,13
+1314,Network 3,District,Far Northwest Side,BELMONT CRAGIN,5
+1315,Network 12,District,Greater Stony Island,SOUTH SHORE,7
+1316,Network 4,District,Greater Lincoln Park,NEAR NORTH SIDE,14
+1318,Network 3,District,Far Northwest Side,BELMONT CRAGIN,5
+1319,Network 12,District,Greater Stony Island,SOUTH CHICAGO,7
+1320,Network 10,District,Greater Midway,CHICAGO LAWN,9
+1321,Network 13,District,Greater Calumet,SOUTH DEERING,8
+1322,Network 5,District,West Side,EAST GARFIELD PARK,2
+1323,Network 7,District,West Side,NORTH LAWNDALE,2
+1324,Network 10,District,Greater Midway,CHICAGO LAWN,9
+1326,Network 4,District,Greater Lincoln Park,LINCOLN PARK,14
+1327,Network 6,District,Near West Side,NEAR WEST SIDE,12
+1329,Network 6,District,Greater Stockyards,BRIDGEPORT,10
+1330,Network 7,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1332,Network 9,District,Bronzeville / South Lakefront,WOODLAWN,6
+1333,Network 12,District,Greater Stony Island,CHATHAM,7
+1334,Network 10,District,Greater Midway,CHICAGO LAWN,9
+1335,Network 3,District,Far Northwest Side,BELMONT CRAGIN,5
+1337,Network 2,District,Northwest Side,LINCOLN SQUARE,4
+1340,ISP,District,Greater Milwaukee Avenue,WEST TOWN,13
+1341,Network 4,District,Greater Milwaukee Avenue,LOGAN SQUARE,13
+1343,Network 5,District,Greater Milwaukee Avenue,WEST TOWN,13
+1344,Network 10,District,Greater Midway,CHICAGO LAWN,9
+1345,Network 4,District,Greater Lincoln Park,LAKE VIEW,14
+1348,Network 6,District,Greater Stockyards,BRIDGEPORT,10
+1349,Network 10,District,Far Southwest Side,MOUNT GREENWOOD,0
+1350,Network 1,District,Far Northwest Side,NORWOOD PARK,5
+1351,Network 10,District,Far Southwest Side,MOUNT GREENWOOD,0
+1353,Network 13,District,Greater Calumet,WASHINGTON HEIGHTS,8
+1354,Network 10,District,Greater Midway,CLEARING,9
+1355,Network 4,District,Greater Milwaukee Avenue,LOGAN SQUARE,13
+1356,Network 1,District,Northwest Side,IRVING PARK,4
+1357,Network 9,District,Bronzeville / South Lakefront,HYDE PARK,6
+1358,Network 13,District,Greater Calumet,WEST PULLMAN,8
+1359,Network 3,District,West Side,AUSTIN,2
+1360,Network 12,District,Greater Stony Island,CHATHAM,7
+1361,Network 4,District,Greater Lincoln Park,LAKE VIEW,14
+1362,Network 4,District,Greater Lincoln Park,LINCOLN PARK,14
+1363,Network 8,District,Greater Midway,GAGE PARK,9
+1364,Network 4,District,Far Northwest Side,HERMOSA,5
+1365,ISP,District,West Side,HUMBOLDT PARK,2
+1366,Network 1,District,Far Northwest Side,NORWOOD PARK,5
+1367,Network 5,District,West Side,HUMBOLDT PARK,2
+1368,Network 15,District,Central Area,NEAR NORTH SIDE,0
+1369,Network 11,District,South Side,AUBURN GRESHAM,1
+1370,Network 12,District,Greater Stony Island,SOUTH SHORE,7
+1371,Network 1,District,Far Northwest Side,NORWOOD PARK,5
+1372,Network 1,District,Far Northwest Side,NORWOOD PARK,5
+1373,Network 5,District,West Side,HUMBOLDT PARK,2
+1374,Network 6,District,Greater Milwaukee Avenue,WEST TOWN,13
+1375,Network 11,District,South Side,WEST ENGLEWOOD,1
+1376,Network 10,District,South Side,ASHBURN,1
+1377,Network 9,District,Bronzeville / South Lakefront,DOUGLAS,6
+1378,ISP,District,Northwest Side,ALBANY PARK,4
+1379,Network 11,District,South Side,ENGLEWOOD,1
+1381,Network 12,District,Greater Stony Island,GREATER GRAND CROSSING,7
+1382,Network 12,District,Greater Stony Island,SOUTH SHORE,7
+1383,Network 8,District,Greater Midway,WEST ELSDON,9
+1386,ISP,District,Greater Midway,WEST ELSDON,9
+1387,Network 6,District,Near West Side,NEAR WEST SIDE,12
+1388,Network 2,District,North Lakefront,EDGEWATER,3
+1389,Network 7,District,West Side,NORTH LAWNDALE,2
+1390,Network 12,District,Greater Stony Island,BURNSIDE,7
+1391,Network 7,District,Pilsen / Little Village,LOWER WEST SIDE,11
+1392,Network 9,District,Bronzeville / South Lakefront,DOUGLAS,6
+1393,Network 1,District,Northwest Side,NORTH PARK,4
+1394,Network 13,District,Greater Calumet,WASHINGTON HEIGHTS,8
+1395,Network 7,District,Pilsen / Little Village,LOWER WEST SIDE,11
+1396,Network 12,District,Greater Stony Island,CHATHAM,7
+1397,ISP,District,West Side,NORTH LAWNDALE,2
+1398,Network 13,District,Greater Calumet,PULLMAN,8
+1399,Network 5,District,West Side,HUMBOLDT PARK,2
+1401,Network 1,District,Far Northwest Side,PORTAGE PARK,5
+1402,Network 4,District,Greater Lincoln Park,LINCOLN PARK,14
+1403,Network 1,District,Far Northwest Side,PORTAGE PARK,5
+1404,Network 6,District,Greater Milwaukee Avenue,LOGAN SQUARE,13
+1405,Network 13,District,Greater Calumet,PULLMAN,8
+1407,Network 2,District,North Lakefront,LAKE VIEW,3
+1408,Network 9,District,Bronzeville / South Lakefront,HYDE PARK,6
+1409,Network 9,District,Bronzeville / South Lakefront,KENWOOD,6
+1410,Network 4,District,Greater Milwaukee Avenue,AVONDALE,13
+1411,Network 1,District,Far Northwest Side,PORTAGE PARK,5
+1412,Network 12,District,Greater Stony Island,GREATER GRAND CROSSING,7
+1413,Network 2,District,Northwest Side,WEST RIDGE,4
+1414,ISP,District,Greater Stockyards,NEW CITY,10
+1416,Network 12,District,Greater Stony Island,GREATER GRAND CROSSING,7
+1417,Network 11,District,South Side,AUBURN GRESHAM,1
+1419,Network 1,District,Northwest Side,FOREST GLEN,4
+1421,Network 8,District,Greater Midway,GAGE PARK,9
+1422,Network 3,District,West Side,AUSTIN,2
+1423,Network 1,District,Greater Milwaukee Avenue,IRVING PARK,13
+1427,Network 1,District,Far Northwest Side,EDISON PARK,5
+1429,Network 3,District,Far Northwest Side,BELMONT CRAGIN,5
+1431,Network 8,District,Greater Stockyards,NEW CITY,10
+1433,ISP,District,Greater Stockyards,BRIGHTON PARK,10
+1434,Network 12,District,Greater Stony Island,SOUTH CHICAGO,7
+1435,Network 8,District,South Side,NEW CITY,1
+1436,ISP,District,South Side,ENGLEWOOD,1
+1437,Network 8,District,Greater Stockyards,BRIGHTON PARK,10
+1438,Network 9,District,Bronzeville / South Lakefront,KENWOOD,6
+1439,Network 13,District,Greater Calumet,MORGAN PARK,8
+1440,Network 6,District,Near West Side,NEAR WEST SIDE,12
+1441,Network 12,District,Greater Stony Island,PULLMAN,7
+1442,Network 1,District,Far Northwest Side,PORTAGE PARK,5
+1443,Network 6,District,Near West Side,NEAR WEST SIDE,12
+1444,Network 1,District,Northwest Side,NORTH PARK,4
+1445,Network 3,District,West Side,AUSTIN,2
+1446,Network 16,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1447,Network 10,District,Greater Midway,ASHBURN,9
+1449,Network 13,District,Greater Calumet,ROSELAND,8
+1451,Network 2,District,Northwest Side,WEST RIDGE,4
+1452,Network 5,District,Greater Milwaukee Avenue,HUMBOLDT PARK,13
+1453,Network 12,District,Greater Stony Island,SOUTH CHICAGO,7
+1454,Network 5,District,West Side,WEST GARFIELD PARK,2
+1455,Network 10,District,Far Southwest Side,BEVERLY,0
+1456,Network 2,District,North Lakefront,EDGEWATER,3
+1457,Network 6,District,Greater Milwaukee Avenue,WEST TOWN,13
+1458,Network 13,District,Greater Calumet,EAST SIDE,8
+1459,Network 13,District,Greater Calumet,WEST PULLMAN,8
+1460,Network 12,District,Greater Stony Island,SOUTH CHICAGO,7
+1461,ISP,District,Far Northwest Side,DUNNING,5
+1462,Network 5,District,West Side,WEST GARFIELD PARK,2
+1463,Network 8,District,Greater Midway,GAGE PARK,9
+1465,Network 10,District,Greater Midway,GARFIELD RIDGE,9
+1466,Network 10,District,Far Southwest Side,BEVERLY,0
+1467,Network 13,District,Greater Calumet,ROSELAND,8
+1468,Network 1,District,Northwest Side,ALBANY PARK,4
+1470,Network 1,District,Northwest Side,ALBANY PARK,4
+1471,Network 9,District,Bronzeville / South Lakefront,WOODLAWN,6
+1472,Network 7,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1473,Network 7,District,Pilsen / Little Village,LOWER WEST SIDE,11
+1474,Network 6,District,Greater Stockyards,ARMOUR SQUARE,10
+1475,Network 12,District,Greater Stony Island,CALUMET HEIGHTS,7
+1476,Network 13,District,Greater Calumet,EAST SIDE,8
+1477,Network 2,District,Northwest Side,LINCOLN SQUARE,4
+1478,Network 5,District,West Side,WEST GARFIELD PARK,2
+1479,Network 11,District,South Side,WEST ENGLEWOOD,1
+1481,Network 13,District,Greater Calumet,WEST PULLMAN,8
+1482,Network 8,District,Greater Midway,GAGE PARK,9
+1483,Network 7,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1484,Network 7,District,Pilsen / Little Village,LOWER WEST SIDE,11
+1485,Network 6,District,Greater Milwaukee Avenue,WEST TOWN,13
+1486,Network 1,District,Far Northwest Side,FOREST GLEN,5
+1487,Network 6,District,Central Area,NEAR SOUTH SIDE,0
+1490,Network 5,District,Greater Milwaukee Avenue,LOGAN SQUARE,13
+1491,Network 3,District,West Side,AUSTIN,2
+1493,Network 9,District,Bronzeville / South Lakefront,GRAND BOULEVARD,6
+1494,Network 11,District,South Side,ENGLEWOOD,1
+1495,Network 8,District,South Side,NEW CITY,1
+1498,Network 2,District,North Lakefront,UPTOWN,3
+1500,ISP,District,West Side,AUSTIN,2
+1501,Network 15,District,West Side,AUSTIN,2
+1502,Network 9,District,Bronzeville / South Lakefront,WASHINGTON PARK,6
+1503,Network 1,District,Far Northwest Side,DUNNING,5
+1504,Network 8,District,Greater Midway,GAGE PARK,9
+1505,ISP,District,Central Area,NEAR NORTH SIDE,0
+1506,Network 5,District,West Side,EAST GARFIELD PARK,2
+1507,Network 6,District,Near West Side,NEAR WEST SIDE,12
+1509,Network 7,District,West Side,NORTH LAWNDALE,2
+1511,Network 9,District,Bronzeville / South Lakefront,OAKLAND,6
+1512,Network 5,District,West Side,HUMBOLDT PARK,2
+1517,Network 9,District,Bronzeville / South Lakefront,GREATER GRAND CROSSING,6
+1521,Network 12,District,Greater Stony Island,CHATHAM,7
+1522,Network 2,District,North Lakefront,UPTOWN,3
+1523,Network 5,District,West Side,EAST GARFIELD PARK,2
+1525,Network 5,District,West Side,NORTH LAWNDALE,2
+1526,Network 9,District,Bronzeville / South Lakefront,GRAND BOULEVARD,6
+1528,Network 12,District,Greater Stony Island,GREATER GRAND CROSSING,7
+1530,Network 12,District,Greater Stony Island,SOUTH SHORE,7
+1531,Network 3,District,West Side,AUSTIN,2
+1533,Network 2,District,North Lakefront,ROGERS PARK,3
+1536,Network 10,District,South Side,ASHBURN,1
+1537,Network 11,District,South Side,ENGLEWOOD,1
+1538,ISP,District,Greater Midway,WEST LAWN,9
+1540,Network 5,District,West Side,WEST GARFIELD PARK,2
+1541,Network 13,District,Greater Calumet,WEST PULLMAN,8
+1544,Network 11,District,South Side,CHATHAM,1
+1545,Network 11,District,South Side,ENGLEWOOD,1
+1546,Network 11,District,South Side,CHATHAM,1
+1550,Network 15,District,Near West Side,NEAR WEST SIDE,12
+1551,Network 3,District,West Side,AUSTIN,2
+1554,Network 6,District,Near West Side,NEAR WEST SIDE,12
+1558,ISP,District,Greater Stony Island,CALUMET HEIGHTS,7
+1559,Network 5,District,Greater Milwaukee Avenue,WEST TOWN,13
+1561,Network 13,District,Greater Calumet,WEST PULLMAN,8
+1562,Network 12,District,Greater Stony Island,CALUMET HEIGHTS,7
+1563,Network 8,District,Greater Stockyards,BRIGHTON PARK,10
+1565,Network 8,District,Greater Stockyards,MCKINLEY PARK,10
+1569,Network 17,District,Greater Stony Island,SOUTH CHICAGO,7
+1571,Network 4,District,Greater Milwaukee Avenue,AVONDALE,13
+1572,Network 7,District,Pilsen / Little Village,LOWER WEST SIDE,11
+1573,Network 15,District,West Side,EAST GARFIELD PARK,2
+1577,Network 11,District,South Side,ENGLEWOOD,1
+1578,Network 14,District,Far Northwest Side,DUNNING,5
+1580,Network 6,District,Greater Milwaukee Avenue,WEST TOWN,13
+1583,Network 9,District,Bronzeville / South Lakefront,GRAND BOULEVARD,6
+1584,Network 10,District,Greater Midway,CHICAGO LAWN,9
+1587,Network 12,District,Greater Stony Island,CALUMET HEIGHTS,7
+1588,Network 10,District,Greater Midway,ASHBURN,9
+1589,Network 8,District,Greater Stockyards,BRIGHTON PARK,10
+1590,Network 1,District,Northwest Side,ALBANY PARK,4
+1591,Network 2,District,North Lakefront,UPTOWN,3
+1593,Network 16,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1596,Network 11,District,South Side,WASHINGTON HEIGHTS,1
+1597,Network 2,District,North Lakefront,UPTOWN,3
+1598,Network 13,District,Greater Calumet,RIVERDALE,8
+1600,ISP,District,South Side,WASHINGTON HEIGHTS,1
+1601,Network 3,District,West Side,AUSTIN,2
+1602,Network 13,District,Greater Calumet,ROSELAND,8
+1603,Network 11,District,South Side,AUBURN GRESHAM,1
+1611,Network 17,District,Bronzeville / South Lakefront,GRAND BOULEVARD,6
+1612,Network 17,District,Bronzeville / South Lakefront,GRAND BOULEVARD,6
+1613,Network 15,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1614,Network 15,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1615,Network 15,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1616,Options,District,South Side,NEW CITY,1
+1619,Network 15,District,West Side,HUMBOLDT PARK,2
+1620,ISP,District,Far Northwest Side,PORTAGE PARK,5
+1621,Network 16,District,South Side,WEST ENGLEWOOD,1
+1622,Network 15,District,Pilsen / Little Village,SOUTH LAWNDALE,11
+1623,Network 14,District,North Lakefront,UPTOWN,3
+1625,Network 10,District,Greater Midway,CHICAGO LAWN,9
+1630,Network 14,District,Northwest Side,LINCOLN SQUARE,4
+1632,Network 6,District,Near West Side,NEAR WEST SIDE,12
+1694,,,,,0
+1696,,,,,0
+1698,Network 15,District,West Side,NORTH LAWNDALE,2
+1702,ISP,District,West Side,NORTH LAWNDALE,2
+1703,ISP,District,Greater Stockyards,MCKINLEY PARK,10
+1711,Network 16,District,Greater Stockyards,ARMOUR SQUARE,10
+1713,Network 14,District,Far Northwest Side,IRVING PARK,5
+1716,Network 15,District,West Side,AUSTIN,2
+1718,ISP,District,Greater Milwaukee Avenue,WEST TOWN,13
+1719,ISP,District,South Side,WEST ENGLEWOOD,1
+1720,,,,,0
+1721,Network 1,District,Far Northwest Side,NORWOOD PARK,5
+1722,Network 15,District,Northwest Side,NORTH CENTER,4
+1727,Network 15,District,Greater Milwaukee Avenue,WEST TOWN,13
+1728,Network 12,District,Greater Stony Island,SOUTH SHORE,7
+1730,Network 8,District,Greater Midway,GAGE PARK,9
+1731,Network 3,District,Far Northwest Side,BELMONT CRAGIN,5
+1732,Network 4,District,Greater Lincoln Park,NEAR NORTH SIDE,14
+1737,ISP,District,Far Northwest Side,BELMONT CRAGIN,5
+1738,Network 4,District,Greater Milwaukee Avenue,AVONDALE,13
+1739,ISP,District,Northwest Side,WEST RIDGE,4
+1740,Network 15,District,Greater Midway,GAGE PARK,9
+1741,Network 10,District,Greater Midway,WEST LAWN,9
+1743,Network 17,District,Greater Stony Island,SOUTH SHORE,7
+1744,ISP,District,Near West Side,NEAR WEST SIDE,12
+1753,Options,ALOP,South Side,ASHBURN,1
+1754,Network 16,District,Greater Midway,ASHBURN,9
+1755,Network 8,District,Greater Stockyards,BRIGHTON PARK,10
+1756,Network 15,District,Near West Side,NEAR WEST SIDE,12
+1757,Network 16,District,Greater Stockyards,NEW CITY,10
+1758,Network 14,District,Northwest Side,IRVING PARK,4
+1759,Options,Contract,South Side,ENGLEWOOD,1
+1762,Options,ALOP,Northwest Side,AVONDALE,4
+1763,Options,ALOP,Far Northwest Side,EDISON PARK,5
+1764,Options,ALOP,Greater Midway,CHICAGO LAWN,9
+1765,Options,ALOP,West Side,NORTH LAWNDALE,2
+1766,Options,SAFE,Greater Stony Island,SOUTH SHORE,7
+1767,Options,SAFE,Greater Stony Island,SOUTH SHORE,7
+1775,Network 13,District,Greater Calumet,EAST SIDE,8
+1776,Network 17,District,Bronzeville / South Lakefront,WASHINGTON PARK,6
+1777,Network 10,District,Greater Midway,WEST LAWN,9
+1778,Network 8,District,Greater Midway,WEST ELSDON,9
+1779,Network 9,District,Bronzeville / South Lakefront,GRAND BOULEVARD,6
+1781,Network 16,District,South Side,ENGLEWOOD,1
+1782,Options,ALOP,Greater Calumet,MORGAN PARK,8
+1783,Options,ALOP,Greater Milwaukee Avenue,WEST TOWN,13
+1784,Network 4,District,Greater Lincoln Park,LINCOLN PARK,14
+1785,ISP,District,,NEAR WEST SIDE,0
+1786,ISP,District,,NEAR WEST SIDE,0
+1787,Network 1,District,Far Northwest Side,JEFFERSON PARK,5
+1788,Network 16,District,,,0
+1789,Options,SAFE,West Side,WEST GARFIELD PARK,2
+1822,,District,,,0
+1823,,District,,,0
+1824,,District,,,0
+1825,,District,,,0
+1828,,District,,,0
+1829,,District,,,0
+1830,,District,,,0
+1831,,District,,,0
+1832,,District,,,0
+1833,,District,,,0
+1834,,District,,,0
+1838,,District,,,0
+1839,,District,,,0
+1840,,District,,,0
+1843,,District,,,0
+1844,,District,,,0
+1845,,District,,,0
+1846,,District,,,0
+1847,,District,,,0
+1848,,District,,,0
+1849,,District,,,0
+1850,,District,,,0
+1851,,District,,,0
+1852,,District,,,0
+1853,,District,,,0
+1854,,District,,,0
+1855,,District,,,0
+1856,,District,,,0
+1857,,District,,,0
+1858,,District,,,0
+1859,,District,,,0
+1861,,District,,,0
+1862,,District,,,0
+1863,,District,,,0
+1865,,District,,,0
+1866,,District,,,0
+1867,,District,,,0
+1868,,District,,,0
+1869,,District,,,0
+1870,,District,,,0
+1871,,District,,,0
+1872,,District,,,0
+1873,,District,,,0
+1874,,District,,,0
+1875,,District,,,0
+1876,,District,,,0
+1877,,District,,,0
+1878,,District,,,0
+1879,,District,,,0
+1880,,District,,,0
+1881,,District,,,0
+1882,,District,,,0
+1883,,District,,,0
+1884,,District,,,0
+1885,,District,,,0
+1886,,District,,,0
+1887,,District,,,0
+1888,,District,,,0
+1889,,District,,,0
+1890,,District,,,0
+1891,,District,,,0
+1892,,District,,,0
+1893,,District,,,0
+1894,,District,,,0
+1895,,District,,,0
+1896,,District,,,0
+1897,,District,,,0
+1898,,District,,,0
+1899,,District,,,0
+1900,,District,,,0
+1901,,District,,,0
+1902,,District,,,0
+1903,,District,,,0
+1904,,District,,,0
+1905,,District,,,0
+1906,,District,,,0
+1907,,District,,,0
+1908,,District,,,0
+1910,,District,,,0
+1912,,District,,,0
+1913,,District,,,0
+1914,,District,,,0
+1915,,District,,,0
+1916,,District,,,0
+1917,,District,,,0
+1918,,District,,,0
+1919,,District,,,0
+1920,,District,,,0
+1921,,District,,,0
+1924,,District,,,0
+1925,,District,,,0
+1927,,District,,,0
+1929,,District,,,0
+1930,,District,,,0
+1933,,District,,,0
+1934,,District,,,0
+1939,,District,,,0
+1940,,District,,,0
+1941,,District,,,0
+1942,,District,,,0
+1943,,District,,,0
+1944,,District,,,0
+1946,,District,,,0
+1947,,District,,,0
+1948,,District,,,0
+1949,,District,,,0
+1950,,District,,,0
+1951,,District,,,0
+1952,,District,,,0
+1953,,District,,,0
+1954,,District,,,0
+1957,,District,,,0
+1958,,District,,,0
+1959,,District,,,0
+1962,,District,,,0
+1963,,District,,,0
+1964,,District,,,0
+1965,,District,,,0
+1966,,District,,,0
+1967,,District,,,0
+1968,,District,,,0
+1969,,District,,,0
+1972,,District,,,0
+1973,,District,,,0
+1976,,District,,,0
+1977,,District,,,0
+1978,,District,,,0
+1979,,District,,,0
+1982,,District,,,0
+1985,,District,,,0
+1986,,District,,,0
+1988,,District,,,0
+1989,,District,,,0
+1990,,District,,,0
+1992,,District,,,0
+1996,,District,,,0
+2000,,District,,,0
+2002,,District,,,0
+2003,,District,,,0
+2004,,District,,,0
+2005,,District,,,0
+2027,,District,,,0
+2029,,District,,,0
+2031,,District,,,0
+2032,,District,,,0
+2033,,District,,,0
+2034,,District,,,0
+2035,,District,,,0
+2036,,District,,,0
+2037,,District,,,0
+2039,,District,,,0
+2041,,District,,,0
+2043,,District,,,0
+2045,,District,,,0
+2048,,District,,,0
+2049,,District,,,0
+2051,,District,,,0
+2053,,District,,,0
+2054,,District,,,0
+2057,,District,,,0
+2061,,District,,,0
+2062,,District,,,0
+2071,,District,,,0
+2072,,District,,,0
+2073,,District,,,0
+2075,,District,,,0
+2076,,District,,,0
+2078,,District,,,0
+2080,,District,,,0
+2082,,District,,,0
+2083,,District,,,0
+2084,,District,,,0
+2085,,District,,,0
+2086,,District,,,0
+2091,,District,,,0
+2092,,District,,,0
+2093,,District,,,0
+2094,,District,,,0
+2095,,District,,,0
+2096,,District,,,0
+2097,,District,,,0
+2098,,District,,,0
+2099,,District,,,0
+2100,,District,,,0
+2105,,District,,,0
+2109,,District,,,0
+2116,,District,,,0
+2140,,District,,,0
+2141,,District,,,0
+2143,,District,,,0
+2153,,District,,,0
+2155,,District,,,0
+2160,,District,,,0
+2161,,District,,,0
+2163,,District,,,0
+2164,,District,,,0
+2169,,District,,,0
+2172,,District,,,0
+2177,,District,,,0
+2199,,District,,,0
+2202,,District,,,0
+2205,,District,,,0
+2208,,District,,,0
+2210,,District,,,0
+2212,,District,,,0
+2223,,District,,,0
+2232,,District,,,0
+2238,,District,,,0
+2240,,District,,,0
+2243,,District,,,0
+2248,,District,,,0
+2253,,District,,,0
+2262,,District,,,0
+2274,,District,,,0
+2277,,District,,,0
+2280,,District,,,0
+2282,,District,,,0
+2284,,District,,,0
+2286,,District,,,0
+2289,,District,,,0
+2293,,District,,,0
+2302,,District,,,0
+2306,,District,,,0
+2316,,District,,,0
+2342,,District,,,0
+2352,,District,,,0
+2432,,,,,0

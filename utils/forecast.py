@@ -25,39 +25,42 @@ MODEL_DIR = "gbt_enrollment_model"
 
 # ── Feature order — must match the VectorAssembler inputCols exactly ──────────
 FEATURES = [
-    "SAME_GRADE_LAST_YEAR",              # 0
-    "SAME_GRADE_2YR_AGO",                # 1
-    "FEEDER_GRADE_LAST_YEAR",            # 2
-    "FEEDER_GRADE_2YR_AGO",              # 3
-    "HAS_FEEDER_GRADE",                  # 4
-    "SCHOOL_TOTAL_LAST_YEAR",            # 5
-    "COHORT_SURVIVAL_RATE",              # 6
-    "AVG_SURVIVAL_RATE_3YR",             # 7
-    "DISTRICT_GRADE_ENROLLMENT_LAST_YEAR",  # 8
-    "IS_MIGRANT_ANOMALY_YEAR",           # 9
-    "GRADE_NUMERIC",                     # 10
-    "SCHOOL_EFFECT",                     # 11
-    "GOVERNANCE_ENCODED",                # 12
-    "IS_SELECTIVE",                      # 13
-    "IS_ATTENDANCE_AREA",                # 14
-    "IS_SMALL_SCHOOL",                   # 15
-    "IS_HIGH_SCHOOL",                    # 16
-    "REGION_ENCODED",                    # 17
-    "GRADE_idx",                         # 18  (from StringIndexer)
+    "SAME_GRADE_LAST_YEAR",                  # 0
+    "SAME_GRADE_2YR_AGO",                    # 1
+    "FEEDER_GRADE_LAST_YEAR",                # 2
+    "FEEDER_GRADE_2YR_AGO",                  # 3
+    "SCHOOL_TOTAL_LAST_YEAR",                # 4
+    "COHORT_SURVIVAL_RATE",                  # 5
+    "AVG_SURVIVAL_RATE_3YR",                 # 6
+    "DISTRICT_GRADE_ENROLLMENT_LAST_YEAR",   # 7
+    "EFFECTIVE_LEADERS_LAST_YEAR",           # 8   5Essentials pillar scores (prior year)
+    "COLLABORATIVE_TEACHERS_LAST_YEAR",      # 9
+    "INVOLVED_FAMILIES_LAST_YEAR",           # 10
+    "SUPPORTIVE_ENVIRONMENT_LAST_YEAR",      # 11
+    "AMBITIOUS_INSTRUCTION_LAST_YEAR",       # 12
+    "SAME_GRADE_AVG_3YR",                    # 13  multi-year averages & trends
+    "SAME_GRADE_TREND",                      # 14
+    "FEEDER_GRADE_TREND",                    # 15
+    "SCHOOL_TOTAL_2YR_AGO",                  # 16
+    "SCHOOL_TOTAL_AVG_3YR",                  # 17
+    "SCHOOL_TOTAL_TREND",                    # 18
+    "DISTRICT_GRADE_ENROLLMENT_2YR_AGO",     # 19
+    "DISTRICT_GRADE_ENROLLMENT_AVG_3YR",     # 20
+    "DISTRICT_GRADE_ENROLLMENT_TREND",       # 21
+    "GRADE_idx",                             # 22  (from StringIndexer)
 ]
 
 # StringIndexer labelsArray (frequencyDesc order). Index = GRADE_idx.
 # Unseen grades map to len(GRADE_LABELS) because handleInvalid="keep".
-GRADE_LABELS = ["8", "7", "6", "5", "4", "3", "2", "1", "11", "10", "12"]
+GRADE_LABELS = ["8", "7", "6", "5", "4", "3", "K", "2", "1", "9", "11", "12", "10"]
 GRADE_IDX = {g: i for i, g in enumerate(GRADE_LABELS)}
 GRADE_IDX_KEEP = float(len(GRADE_LABELS))
 
-# ── Model accuracy — single-fold validation, train 2020-2025, validate SY2026 ─
-# Documented in "CPS_Enrollment_Model review.pdf" (RMSE 32.85, MAE 8.14);
-# reproduced by this app's scorer on the CSV: RMSE 32.83, MAE 8.11, R² 0.89.
-MODEL_MAE  = 8.1      # students, per school × grade
-MODEL_RMSE = 32.8     # students, per school × grade
-MODEL_R2   = 0.89
+# ── Model accuracy — held-out validation (train 2020-2025, validate SY2026),
+# all grades, reproduced by this app's GBT scorer on the current CSV.
+MODEL_MAE  = 10.9     # students, per school × grade
+MODEL_RMSE = 43.8     # students, per school × grade
+MODEL_R2   = 0.85
 
 # ── Official results from the model review document (4-year walk-forward
 #    backtest SY2023–2026, 18,899 school-grade predictions, 842 open schools) ─
@@ -109,10 +112,10 @@ OFFICIAL_FI = {
 def _read_trees_and_weights(model_dir: str) -> tuple[dict, dict]:
     """Load every tree node and its per-tree weight from the GBT stage."""
     data_files = sorted(glob.glob(
-        f"{model_dir}/stages/*GBTRegressor*/data/part-*.parquet"))
+        f"{model_dir}/**/stages/*GBTRegressor*/data/part-*.parquet", recursive=True))
     if not data_files:
         raise FileNotFoundError(
-            f"No GBT Parquet data found under {model_dir}/stages/*GBTRegressor*/data/")
+            f"No GBT Parquet data found under {model_dir} (searched recursively for stages/*GBTRegressor*/data)")
 
     node_df = pd.concat([pd.read_parquet(f) for f in data_files], ignore_index=True)
     trees: dict[int, dict[int, dict]] = {}
@@ -122,7 +125,7 @@ def _read_trees_and_weights(model_dir: str) -> tuple[dict, dict]:
         trees.setdefault(tid, {})[int(nd["id"])] = nd
 
     wfiles = sorted(glob.glob(
-        f"{model_dir}/stages/*GBTRegressor*/treesMetadata/part-*.parquet"))
+        f"{model_dir}/**/stages/*GBTRegressor*/treesMetadata/part-*.parquet", recursive=True))
     wmeta = pd.concat([pd.read_parquet(f) for f in wfiles], ignore_index=True)
     weights = {int(r["treeID"]): float(r["weights"]) for _, r in wmeta.iterrows()}
     return trees, weights
@@ -161,7 +164,7 @@ def score_gbt(trees: dict, weights: dict, fvec: np.ndarray) -> float:
 
 
 def predict_rows(feature_df: pd.DataFrame) -> np.ndarray:
-    """Score a DataFrame that already contains all 19 FEATURES columns."""
+    """Score a DataFrame that already contains all FEATURES columns."""
     trees, weights = load_gbt_model()
     X = feature_df[FEATURES].astype(float).fillna(0.0).values
     return np.array([max(0.0, score_gbt(trees, weights, row)) for row in X])

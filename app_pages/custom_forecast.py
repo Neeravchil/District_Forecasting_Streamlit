@@ -50,6 +50,10 @@ def _context():
                                      "SAME_GRADE_LAST_YEAR"].median()),
         "med_school_total": int(df.loc[df["SCHOOL_TOTAL_LAST_YEAR"].notna(),
                                        "SCHOOL_TOTAL_LAST_YEAR"].median()),
+        "med_rep": {c: float(df[c].median()) for c in [
+            "EFFECTIVE_LEADERS_LAST_YEAR", "COLLABORATIVE_TEACHERS_LAST_YEAR",
+            "INVOLVED_FAMILIES_LAST_YEAR", "SUPPORTIVE_ENVIRONMENT_LAST_YEAR",
+            "AMBITIOUS_INSTRUCTION_LAST_YEAR"]},
     }
 
 
@@ -194,20 +198,23 @@ row = {
     "SAME_GRADE_2YR_AGO": same_2yr,
     "FEEDER_GRADE_LAST_YEAR": feeder_last,
     "FEEDER_GRADE_2YR_AGO": feeder_2yr,
-    "HAS_FEEDER_GRADE": has_feeder,
     "SCHOOL_TOTAL_LAST_YEAR": school_total,
     "COHORT_SURVIVAL_RATE": csr,
     "AVG_SURVIVAL_RATE_3YR": CTX["med_avg_sr3"],
     "DISTRICT_GRADE_ENROLLMENT_LAST_YEAR": dist_grade_total,
+    # 5Essentials pillar scores — held at district medians (not user inputs)
+    **CTX["med_rep"],
+    # multi-year averages & year-over-year trends derived from the inputs
+    "SAME_GRADE_AVG_3YR": (same_last + same_2yr) / 2 if same_2yr else float(same_last),
+    "SAME_GRADE_TREND": float(same_last - same_2yr),
+    "FEEDER_GRADE_TREND": float(feeder_last - feeder_2yr),
+    "SCHOOL_TOTAL_2YR_AGO": float(school_total),
+    "SCHOOL_TOTAL_AVG_3YR": float(school_total),
+    "SCHOOL_TOTAL_TREND": 0.0,
+    "DISTRICT_GRADE_ENROLLMENT_2YR_AGO": float(dist_grade_total),
+    "DISTRICT_GRADE_ENROLLMENT_AVG_3YR": float(dist_grade_total),
+    "DISTRICT_GRADE_ENROLLMENT_TREND": 0.0,
     "IS_MIGRANT_ANOMALY_YEAR": 0.0,
-    "GRADE_NUMERIC": gn,
-    "SCHOOL_EFFECT": CTX["global_sr"],
-    "GOVERNANCE_ENCODED": CTX["gov_enc"].get(governance, 0),
-    "IS_SELECTIVE": 1.0 if is_sel == "Yes" else 0.0,
-    "IS_ATTENDANCE_AREA": 0.0 if is_sel == "Yes" else 1.0,
-    "IS_SMALL_SCHOOL": 1.0 if school_total < 350 else 0.0,
-    "IS_HIGH_SCHOOL": 1.0 if is_hs == "High School" else 0.0,
-    "REGION_ENCODED": CTX["net_enc"].get(network, 0),
     "GRADE_idx": GRADE_IDX.get(str(grade), GRADE_IDX_KEEP),
 }
 # K & 9 are scored by the dedicated XGBoost model; all other grades by the Spark GBT.

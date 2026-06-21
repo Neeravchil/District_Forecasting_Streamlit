@@ -9,6 +9,8 @@ reconstruct here exactly as the notebook does (train-only target encoding).
 
 from __future__ import annotations
 
+import os
+
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -16,6 +18,9 @@ import streamlit as st
 from utils.forecast import GRADE_IDX, GRADE_IDX_KEEP, FEATURES, predict_rows
 
 CSV_PATH = "CPS_Enrollment_Forecasting.csv"
+# Per-school display metadata (NETWORK, governance, region, community), merged in
+# when the model CSV omits it — so network-level views work after a re-export.
+SCHOOL_META_PATH = "school_metadata.csv"
 
 # Training window used in the notebook (Section 1 config: train 2020-2025,
 # validate 2026, forecast 2027). SCHOOL_EFFECT and the median imputations must
@@ -26,13 +31,16 @@ SMOOTHING = 20.0
 
 # Notebook Section 9 — NULL imputation columns (train-only medians)
 NULL_FILL_COLS = [
-    "SAME_GRADE_2YR_AGO",
-    "FEEDER_GRADE_LAST_YEAR",
-    "FEEDER_GRADE_2YR_AGO",
-    "COHORT_SURVIVAL_RATE",
-    "AVG_SURVIVAL_RATE_3YR",
-    "DISTRICT_GRADE_ENROLLMENT_LAST_YEAR",
-    "SCHOOL_TOTAL_LAST_YEAR",
+    "SAME_GRADE_2YR_AGO", "FEEDER_GRADE_LAST_YEAR", "FEEDER_GRADE_2YR_AGO",
+    "COHORT_SURVIVAL_RATE", "AVG_SURVIVAL_RATE_3YR",
+    "DISTRICT_GRADE_ENROLLMENT_LAST_YEAR", "SCHOOL_TOTAL_LAST_YEAR",
+    "EFFECTIVE_LEADERS_LAST_YEAR", "COLLABORATIVE_TEACHERS_LAST_YEAR",
+    "INVOLVED_FAMILIES_LAST_YEAR", "SUPPORTIVE_ENVIRONMENT_LAST_YEAR",
+    "AMBITIOUS_INSTRUCTION_LAST_YEAR",
+    "SAME_GRADE_AVG_3YR", "SAME_GRADE_TREND", "FEEDER_GRADE_TREND",
+    "SCHOOL_TOTAL_2YR_AGO", "SCHOOL_TOTAL_AVG_3YR", "SCHOOL_TOTAL_TREND",
+    "DISTRICT_GRADE_ENROLLMENT_2YR_AGO", "DISTRICT_GRADE_ENROLLMENT_AVG_3YR",
+    "DISTRICT_GRADE_ENROLLMENT_TREND",
 ]
 
 # ── Entry-grade (K & 9) XGBoost model ─────────────────────────────────────────
@@ -40,15 +48,20 @@ NULL_FILL_COLS = [
 # the dedicated XGBoost model from XGBoost_KG_Grade9_Training.ipynb. Feature list
 # and order must match that notebook exactly; NaNs are preserved (XGBoost handles
 # missing values natively, unlike the median-filled Spark path).
-XGB_MODEL_PATH = "xgb_model_all.pkl"
+XGB_MODEL_PATH = "xgb_model_k9.pkl"
 ENTRY_GRADES = ("K", "9")
 XGB_FEATURES = [
     "SAME_GRADE_LAST_YEAR", "SAME_GRADE_2YR_AGO", "FEEDER_GRADE_LAST_YEAR",
-    "FEEDER_GRADE_2YR_AGO", "HAS_FEEDER_GRADE", "SCHOOL_TOTAL_LAST_YEAR",
-    "COHORT_SURVIVAL_RATE", "AVG_SURVIVAL_RATE_3YR",
-    "DISTRICT_GRADE_ENROLLMENT_LAST_YEAR", "IS_MIGRANT_ANOMALY_YEAR",
-    "GRADE_NUMERIC", "SCHOOL_KEY", "GOVERNANCE_ENCODED", "IS_SELECTIVE",
-    "IS_ATTENDANCE_AREA", "IS_SMALL_SCHOOL", "IS_HIGH_SCHOOL", "REGION_ENCODED",
+    "FEEDER_GRADE_2YR_AGO", "SCHOOL_TOTAL_LAST_YEAR", "COHORT_SURVIVAL_RATE",
+    "AVG_SURVIVAL_RATE_3YR", "DISTRICT_GRADE_ENROLLMENT_LAST_YEAR",
+    "IS_MIGRANT_ANOMALY_YEAR",
+    "EFFECTIVE_LEADERS_LAST_YEAR", "COLLABORATIVE_TEACHERS_LAST_YEAR",
+    "INVOLVED_FAMILIES_LAST_YEAR", "SUPPORTIVE_ENVIRONMENT_LAST_YEAR",
+    "AMBITIOUS_INSTRUCTION_LAST_YEAR",
+    "SAME_GRADE_AVG_3YR", "SAME_GRADE_TREND", "FEEDER_GRADE_TREND",
+    "SCHOOL_TOTAL_2YR_AGO", "SCHOOL_TOTAL_AVG_3YR", "SCHOOL_TOTAL_TREND",
+    "DISTRICT_GRADE_ENROLLMENT_2YR_AGO", "DISTRICT_GRADE_ENROLLMENT_AVG_3YR",
+    "DISTRICT_GRADE_ENROLLMENT_TREND",
 ]
 
 
@@ -75,6 +88,10 @@ def xgb_k9_forecast() -> dict:
     model = load_xgb_model()
     raw = pd.read_csv(CSV_PATH)
     raw["GRADE"] = raw["GRADE"].astype(str)
+    if "IS_SCHOOL_OPEN" not in raw.columns:
+        raw["IS_SCHOOL_OPEN"] = 1
+    _y = pd.to_numeric(raw["SCHOOL_YEAR"], errors="coerce")
+    raw["IS_MIGRANT_ANOMALY_YEAR"] = ((_y >= 2022) & (_y <= 2024)).astype(int)
     for c in XGB_FEATURES + ["SCHOOL_YEAR", "IS_SCHOOL_OPEN"]:
         raw[c] = pd.to_numeric(raw[c], errors="coerce")
     latest = int(raw["SCHOOL_YEAR"].max())
@@ -108,6 +125,42 @@ GOV_LABELS = {
 @st.cache_data(ttl=3600)
 def load_data() -> pd.DataFrame:
     df = pd.read_csv(CSV_PATH)
+
+    # ── Display-only metadata (NETWORK, governance, region, community) ────────
+    # The model never used these. If the model CSV omits them, merge them from the
+    # committed per-school lookup so the network / governance / region breakdowns
+    # still work; the migrant flag and open status are derived. Anything still
+    # missing falls back to a safe default below.
+    _meta = ["NETWORK", "GOVERNANCE", "ANNUAL_REGIONAL_ANALYSIS_REGION",
+             "COMMUNITY", "REGION_ENCODED"]
+    _need = [c for c in _meta if c not in df.columns]
+    if _need and os.path.exists(SCHOOL_META_PATH):
+        _lut = pd.read_csv(SCHOOL_META_PATH)
+        df = df.merge(_lut[["SCHOOL_KEY"] + [c for c in _need if c in _lut.columns]],
+                      on="SCHOOL_KEY", how="left")
+    if "REGION_ENCODED" in df.columns:
+        df["REGION_ENCODED"] = pd.to_numeric(df["REGION_ENCODED"], errors="coerce").fillna(0)
+
+    if "IS_SCHOOL_OPEN" not in df.columns:
+        df["IS_SCHOOL_OPEN"] = 1
+    if "IS_MIGRANT_ANOMALY_YEAR" not in df.columns:
+        _y = pd.to_numeric(df["SCHOOL_YEAR"], errors="coerce")
+        df["IS_MIGRANT_ANOMALY_YEAR"] = ((_y >= 2022) & (_y <= 2024)).astype(int)
+    if "HAS_FEEDER_GRADE" not in df.columns:
+        df["HAS_FEEDER_GRADE"] = (df["FEEDER_GRADE_LAST_YEAR"].notna().astype(int)
+                                  if "FEEDER_GRADE_LAST_YEAR" in df.columns else 0)
+    if "GOVERNANCE" not in df.columns:
+        df["GOVERNANCE"] = "Unknown"
+    if "NETWORK" not in df.columns:
+        df["NETWORK"] = "Unassigned"
+    if "ANNUAL_REGIONAL_ANALYSIS_REGION" not in df.columns:
+        df["ANNUAL_REGIONAL_ANALYSIS_REGION"] = np.nan
+    if "COMMUNITY" not in df.columns:
+        df["COMMUNITY"] = "—"
+    for _c in ["GOVERNANCE_ENCODED", "IS_SELECTIVE", "IS_ATTENDANCE_AREA",
+               "IS_SMALL_SCHOOL", "IS_HIGH_SCHOOL", "REGION_ENCODED"]:
+        if _c not in df.columns:
+            df[_c] = 0
 
     numeric = [
         "GRADE_NUMERIC", "SCHOOL_YEAR", "ENROLLMENT",
@@ -208,78 +261,94 @@ def with_network(fc: pd.DataFrame, _df: pd.DataFrame | None = None) -> pd.DataFr
 def build_forecast(_df: pd.DataFrame | None = None) -> pd.DataFrame:
     """One forecast row per open school × grade for the next school year.
 
-    Constructs each grade's next-year feature vector by rolling the same-grade
-    and feeder-grade lags forward from the two most recent actual years, then
-    scores it with the GBT. Returns a tidy frame with FORECAST_ENROLLMENT and
-    the most-recent actual for comparison.
+    Rolls every lag / 3-year-average / year-over-year-trend feature forward from
+    the most recent actual years, carries the latest 5Essentials pillar scores, then
+    scores with the GBT (and the XGBoost entry-grade model for K & 9). Returns
+    FORECAST_ENROLLMENT plus the most recent actual for comparison.
     """
     df = load_data() if _df is None else _df
     latest = latest_year(df)
     prev = latest - 1
+    prev2 = latest - 2
     fyear = latest + 1
     global_sr = df.attrs.get("global_sr", 1.0)
 
     enr = {(int(r.SCHOOL_KEY), int(r.GRADE_NUMERIC), int(r.SCHOOL_YEAR)): float(r.ENROLLMENT)
            for r in df.itertuples(index=False)}
-    school_total = (df[df["SCHOOL_YEAR"] == latest]
-                    .groupby("SCHOOL_KEY")["ENROLLMENT"].sum().to_dict())
-    dist_grade = (df[df["SCHOOL_YEAR"] == latest]
-                  .groupby("GRADE_NUMERIC")["ENROLLMENT"].sum().to_dict())
+
+    def totals(col, year):
+        return df[df["SCHOOL_YEAR"] == year].groupby(col)["ENROLLMENT"].sum().to_dict()
+    school_total = {y: totals("SCHOOL_KEY", y) for y in (latest, prev, prev2)}
+    dist_grade = {y: totals("GRADE_NUMERIC", y) for y in (latest, prev, prev2)}
+
+    def mean3(vals):
+        v = [x for x in vals if pd.notna(x)]
+        return float(np.mean(v)) if v else np.nan
+
+    def diff(a, b):
+        return float(a - b) if pd.notna(a) and pd.notna(b) else np.nan
 
     base = df[(df["SCHOOL_YEAR"] == latest) & (df["IS_SCHOOL_OPEN"] == 1)].copy()
-
     rows = []
     for r in base.itertuples(index=False):
         s, gn = int(r.SCHOOL_KEY), int(r.GRADE_NUMERIC)
         same_last = enr.get((s, gn, latest), np.nan)
-        same_2yr  = enr.get((s, gn, prev), np.nan)
-        feed_last = enr.get((s, gn - 1, latest), np.nan)
-        feed_2yr  = enr.get((s, gn - 1, prev), np.nan)
-        has_feeder = 1.0 if pd.notna(feed_last) else 0.0
-
+        same_2yr = enr.get((s, gn, prev), np.nan)
+        same_3yr = enr.get((s, gn, prev2), np.nan)
+        feed_last_raw = enr.get((s, gn - 1, latest), np.nan)
+        feed_2yr_raw = enr.get((s, gn - 1, prev), np.nan)
+        has_feeder = 1.0 if pd.notna(feed_last_raw) else 0.0
+        feed_last = feed_last_raw if pd.notna(feed_last_raw) else same_last
+        feed_2yr = feed_2yr_raw if pd.notna(feed_2yr_raw) else same_2yr
+        st_last, st_2yr, st_3yr = (school_total[latest].get(s, np.nan),
+                                   school_total[prev].get(s, np.nan),
+                                   school_total[prev2].get(s, np.nan))
+        dg_last, dg_2yr, dg_3yr = (dist_grade[latest].get(gn, np.nan),
+                                   dist_grade[prev].get(gn, np.nan),
+                                   dist_grade[prev2].get(gn, np.nan))
         if pd.notna(feed_2yr) and feed_2yr > 0:
             csr = same_last / feed_2yr
         else:
             csr = r.COHORT_SURVIVAL_RATE if pd.notna(r.COHORT_SURVIVAL_RATE) else global_sr
 
         rows.append({
-            "SCHOOL_KEY": s,
-            "GRADE": r.GRADE,
-            "GRADE_NUMERIC": gn,
-            "NETWORK": r.NETWORK,
-            "REGION": r.REGION,
-            "GOVERNANCE": r.GOVERNANCE,
-            "SCHOOL_LABEL": r.SCHOOL_LABEL,
-            "ACTUAL_LATEST": same_last,
-            # ── model features ──
+            "SCHOOL_KEY": s, "GRADE": r.GRADE, "GRADE_NUMERIC": gn,
+            "NETWORK": r.NETWORK, "REGION": r.REGION, "GOVERNANCE": r.GOVERNANCE,
+            "SCHOOL_LABEL": r.SCHOOL_LABEL, "ACTUAL_LATEST": same_last,
+            # ── model features (rolled forward to the forecast year) ──
             "SAME_GRADE_LAST_YEAR": same_last,
             "SAME_GRADE_2YR_AGO": same_2yr,
             "FEEDER_GRADE_LAST_YEAR": feed_last,
             "FEEDER_GRADE_2YR_AGO": feed_2yr,
-            "HAS_FEEDER_GRADE": has_feeder,
-            "SCHOOL_TOTAL_LAST_YEAR": school_total.get(s, np.nan),
+            "SCHOOL_TOTAL_LAST_YEAR": st_last,
             "COHORT_SURVIVAL_RATE": csr,
             "AVG_SURVIVAL_RATE_3YR": r.AVG_SURVIVAL_RATE_3YR,
-            "DISTRICT_GRADE_ENROLLMENT_LAST_YEAR": dist_grade.get(gn, np.nan),
+            "DISTRICT_GRADE_ENROLLMENT_LAST_YEAR": dg_last,
+            "EFFECTIVE_LEADERS_LAST_YEAR": r.EFFECTIVE_LEADERS_LAST_YEAR,
+            "COLLABORATIVE_TEACHERS_LAST_YEAR": r.COLLABORATIVE_TEACHERS_LAST_YEAR,
+            "INVOLVED_FAMILIES_LAST_YEAR": r.INVOLVED_FAMILIES_LAST_YEAR,
+            "SUPPORTIVE_ENVIRONMENT_LAST_YEAR": r.SUPPORTIVE_ENVIRONMENT_LAST_YEAR,
+            "AMBITIOUS_INSTRUCTION_LAST_YEAR": r.AMBITIOUS_INSTRUCTION_LAST_YEAR,
+            "SAME_GRADE_AVG_3YR": mean3([same_last, same_2yr, same_3yr]),
+            "SAME_GRADE_TREND": diff(same_last, same_2yr),
+            "FEEDER_GRADE_TREND": diff(feed_last, feed_2yr),
+            "SCHOOL_TOTAL_2YR_AGO": st_2yr,
+            "SCHOOL_TOTAL_AVG_3YR": mean3([st_last, st_2yr, st_3yr]),
+            "SCHOOL_TOTAL_TREND": diff(st_last, st_2yr),
+            "DISTRICT_GRADE_ENROLLMENT_2YR_AGO": dg_2yr,
+            "DISTRICT_GRADE_ENROLLMENT_AVG_3YR": mean3([dg_last, dg_2yr, dg_3yr]),
+            "DISTRICT_GRADE_ENROLLMENT_TREND": diff(dg_last, dg_2yr),
             "IS_MIGRANT_ANOMALY_YEAR": 0.0,
-            "SCHOOL_EFFECT": r.SCHOOL_EFFECT,
-            "GOVERNANCE_ENCODED": r.GOVERNANCE_ENCODED,
-            "IS_SELECTIVE": r.IS_SELECTIVE,
-            "IS_ATTENDANCE_AREA": r.IS_ATTENDANCE_AREA,
-            "IS_SMALL_SCHOOL": r.IS_SMALL_SCHOOL,
-            "IS_HIGH_SCHOOL": r.IS_HIGH_SCHOOL,
-            "REGION_ENCODED": r.REGION_ENCODED,
+            "HAS_FEEDER_GRADE": has_feeder,
             "GRADE_idx": r.GRADE_idx,
         })
 
     fc = pd.DataFrame(rows)
-    # Same train-only median fills the notebook applies before scoring (Section 14)
+    # Same train-only median fills the notebook applies before scoring
     fc[NULL_FILL_COLS] = fc[NULL_FILL_COLS].fillna(df.attrs["median_fills"])
     fc["FORECAST_ENROLLMENT"] = predict_rows(fc).round(0)
 
-    # K & 9 only: replace the Spark GBT value with the dedicated XGBoost model
-    # (all other grades keep the Spark GBT forecast). No fallback — a missing
-    # K/9 prediction raises KeyError rather than silently keeping the Spark value.
+    # K & 9 only: replace the GBT value with the dedicated XGBoost model.
     is_k9 = fc["GRADE"].astype(str).isin(ENTRY_GRADES)
     if is_k9.any():
         k9 = xgb_k9_forecast()
@@ -343,6 +412,8 @@ def _xgb_entry_valyear() -> dict:
     model = load_xgb_model()
     raw = pd.read_csv(CSV_PATH)
     raw["GRADE"] = raw["GRADE"].astype(str)
+    _y = pd.to_numeric(raw["SCHOOL_YEAR"], errors="coerce")
+    raw["IS_MIGRANT_ANOMALY_YEAR"] = ((_y >= 2022) & (_y <= 2024)).astype(int)
     for c in XGB_FEATURES + ["SCHOOL_YEAR"]:
         raw[c] = pd.to_numeric(raw[c], errors="coerce")
     val = int(raw["SCHOOL_YEAR"].max())
