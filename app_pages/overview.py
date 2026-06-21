@@ -110,8 +110,8 @@ bi = business_impact(df)
 _money = lambda d: f"${d / 1e6:,.0f}M"
 
 st.markdown("<div class='section-header'>What a sharper forecast is worth</div>", unsafe_allow_html=True)
-st.markdown(f"<div class='section-sub'>Student-Based Budgeting allocates about ${bi['per_pupil']:,} "
-            "per projected pupil — so the budget follows the forecast. A more accurate forecast puts "
+st.markdown(f"<div class='section-sub'>Student-Based Budgeting allocates ${bi['per_pupil']:,.2f} "
+            "per projected pupil (CPS FY2024 base rate) — so the budget follows the forecast. A more accurate forecast puts "
             "funding on real students, not phantom seats.</div>", unsafe_allow_html=True)
 
 _c1, _c2, _c3 = st.columns(3)
@@ -146,7 +146,7 @@ st.markdown(f"<div style='text-align:center; font-size:0.92rem; color:#334D66; m
 st.caption(f"Allocation accuracy — funding reaching the right schools — not new revenue. "
            f"Held-out SY{bi['year']} · {bi['n']:,} school-grades · current method = cohort-survival ratio "
            f"(survival held to a plausible ≤1.5×; raw ratios spike to 100×+) · "
-           f"${bi['per_pupil']:,} per pupil (FY26 SBB).")
+           f"${bi['per_pupil']:,.2f} per pupil (CPS FY2024 SBB base rate, official).")
 
 st.markdown("<hr class='thin'/>", unsafe_allow_html=True)
 

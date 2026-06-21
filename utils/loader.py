@@ -18,7 +18,8 @@ import streamlit as st
 from utils.forecast import GRADE_IDX, GRADE_IDX_KEEP, FEATURES, predict_rows
 
 # ── Business-impact assumptions (Student-Based Budgeting) ─────────────────────
-PER_PUPIL_SBB = 6200    # FY26 SBB base allocation per projected pupil ($)
+PER_PUPIL_SBB = 5147.57  # CPS FY2024 SBB base rate per pupil ($) — last universal
+                         # published rate (cps.edu FY2024 Schools & Networks budget)
 # The current method = cohort-survival ratio. Raw 3-yr survival ratios spike to
 # 100x+ when a feeder grade is near zero — projections no real method would make —
 # so we hold them to a plausible ceiling for a fair, credible baseline.
