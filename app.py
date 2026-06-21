@@ -229,7 +229,6 @@ pg = st.navigation(
         "Explore": [
             st.Page("app_pages/district.py",        title="District Overview",        icon="📊"),
             st.Page("app_pages/school_forecast.py", title="School Enrollment Report",  icon="🏫"),
-            st.Page("app_pages/custom_forecast.py", title="Custom School Simulator",   icon="🔬"),
         ],
     },
     position="sidebar",

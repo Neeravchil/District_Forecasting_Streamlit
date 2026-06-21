@@ -285,9 +285,8 @@ st.markdown("<div class='section-sub'>The full story lives on these pages</div>"
 pages = [
     ("#2E6CA4", "📊", "District Overview", "Enrollment trends over time, and where the model beats the old method by network and grade."),
     ("#1B9E5A", "🏫", "School Enrollment Report", "Next year's projection for any single school, grade by grade."),
-    ("#4A90C4", "🔬", "Custom School Simulator", "A what-if tool — change a cohort's recent history and watch the projection move."),
 ]
-for col, (color, icon, title, body) in zip(st.columns(3), pages):
+for col, (color, icon, title, body) in zip(st.columns(len(pages)), pages):
     with col:
         st.markdown(f"""
         <div style='background:#FFFFFF; border:1px solid #E2E8F0; border-top:4px solid {color};
