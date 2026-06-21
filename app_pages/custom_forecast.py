@@ -71,9 +71,9 @@ with st.sidebar:
 st.markdown(f"""
 <div style='background:linear-gradient(135deg,#003057 0%,#00497a 100%);
             border-radius:12px; padding:32px 40px; margin-bottom:28px;
-            border-left:6px solid #C8973A;'>
+            border-left:6px solid #2E6CA4;'>
     <div style='font-size:0.72rem; font-weight:700; letter-spacing:0.14em;
-                color:#C8973A; text-transform:uppercase; margin-bottom:10px;'>
+                color:#2E6CA4; text-transform:uppercase; margin-bottom:10px;'>
         Chicago Public Schools · Custom School Simulator
     </div>
     <div style='font-size:1.9rem; font-weight:800; color:#FFFFFF; line-height:1.25;'>
@@ -108,13 +108,6 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 col_l, col_r = st.columns(2)
 
-
-def _imp_badge(pct, color):
-    return (f"<span style='background:{color}18; color:{color}; font-size:0.68rem; "
-            f"font-weight:700; border-radius:20px; padding:2px 8px; margin-left:6px; "
-            f"vertical-align:middle;'>{pct} impact</span>")
-
-
 with col_l:
     st.markdown(f"""
     <div style='background:#F0F5FA; border:1px solid #D1DBE8; border-top:4px solid #003057;
@@ -128,7 +121,7 @@ with col_l:
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown(f"**This grade — last year ({LATEST})** {_imp_badge('32%', '#003057')}",
+    st.markdown(f"**This grade — last year ({LATEST})**",
                 unsafe_allow_html=True)
     same_last = st.number_input("same_last", min_value=0, max_value=4000,
                                 value=CTX["med_same_grade"], step=1, key="cf_same_last",
@@ -142,7 +135,7 @@ with col_l:
                                key="cf_same_2yr", label_visibility="collapsed",
                                help="Same grade, two years ago — captures the recent trend.")
 
-    st.markdown(f"**Feeder grade — last year ({LATEST})** {_imp_badge('6%', '#003057')}",
+    st.markdown(f"**Feeder grade — last year ({LATEST})**",
                 unsafe_allow_html=True)
     feeder_last = st.number_input("feeder_last", min_value=0, max_value=4000,
                                   value=CTX["med_same_grade"], step=1, key="cf_feeder_last",
@@ -152,18 +145,18 @@ with col_l:
 
 with col_r:
     st.markdown(f"""
-    <div style='background:#FDF8F0; border:1px solid #E8D9B8; border-top:4px solid #C8973A;
+    <div style='background:#EEF4FA; border:1px solid #CFE0F0; border-top:4px solid #2E6CA4;
                 border-radius:10px; padding:20px 20px 8px 20px; margin-bottom:4px;'>
-        <div style='font-size:0.95rem; font-weight:800; color:#C8973A; margin-bottom:2px;'>
+        <div style='font-size:0.95rem; font-weight:800; color:#2E6CA4; margin-bottom:2px;'>
             🏫&nbsp; School Context
         </div>
-        <div style='font-size:0.76rem; color:#7A6040; margin-bottom:16px;'>
+        <div style='font-size:0.76rem; color:#335E85; margin-bottom:16px;'>
             Size and type signals that shape the projection
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown(f"**School total — last year ({LATEST})** {_imp_badge('12%', '#C8973A')}",
+    st.markdown(f"**School total — last year ({LATEST})**",
                 unsafe_allow_html=True)
     school_total = st.number_input("school_total", min_value=0, max_value=6000,
                                    value=CTX["med_school_total"], step=10,
@@ -231,7 +224,7 @@ s1, s2, s3, s4 = st.columns(4)
 for col, (val, lbl, sub, clr) in zip([s1, s2, s3, s4], [
     (f"Grade {grade}",          "Cohort",               school_name,                 "#003057"),
     (f"{same_last:,}",          f"{LATEST} Actual",     "Entered this year",         "#4A90C4"),
-    (f"{forecast:,.0f}",        f"{FYEAR} Projection",  "Model output",              "#C8973A"),
+    (f"{forecast:,.0f}",        f"{FYEAR} Projection",  "Model output",              "#2E6CA4"),
     (f"{change_pct:+.1f}%",     "Projected Change",     f"{change:+,.0f} students",  change_clr),
 ]):
     with col:
@@ -250,8 +243,8 @@ st.markdown("<hr class='thin'/>", unsafe_allow_html=True)
 # ══════════════════════════════════════════════════════════════════════════════
 st.markdown(f"<div class='section-header'>Cohort Trajectory — {school_name}, Grade {grade}</div>",
             unsafe_allow_html=True)
-st.markdown("<div class='section-sub'>Your assumed history (solid) and the model's "
-            f"{FYEAR} projection (hatched) · Shaded = ±RMSE band</div>", unsafe_allow_html=True)
+st.markdown("<div class='section-sub'>Your assumed history and the model's "
+            f"{FYEAR} projection · shaded band = typical error range</div>", unsafe_allow_html=True)
 
 x = [str(LATEST - 1), str(LATEST), str(FYEAR)]
 y_hist = [same_2yr, same_last]
@@ -261,21 +254,21 @@ fig = go.Figure()
 fig.add_trace(go.Bar(name="Assumed actual", x=x[:2], y=y_hist, marker_color="#003057"))
 fig.add_trace(go.Bar(
     name=f"{FYEAR} projection", x=[str(FYEAR)], y=[forecast],
-    marker_color="rgba(200,151,58,0.55)", marker_line=dict(color="#C8973A", width=1.5),
-    marker_pattern_shape="/", marker_pattern_fgcolor="#C8973A",
+    marker_color="rgba(46,108,164,0.55)", marker_line=dict(color="#2E6CA4", width=1.5),
+    marker_pattern_shape="/", marker_pattern_fgcolor="#2E6CA4",
 ))
 fig.add_trace(go.Scatter(
     name="Trend", x=[str(LATEST), str(FYEAR)], y=[same_last, forecast],
-    mode="lines+markers", line=dict(color="#C8973A", width=2.5, dash="dash"),
-    marker=dict(size=9, color="#C8973A", symbol="circle-open"),
+    mode="lines+markers", line=dict(color="#2E6CA4", width=2.5, dash="dash"),
+    marker=dict(size=9, color="#2E6CA4", symbol="circle-open"),
 ))
 fig.add_trace(go.Scatter(
     x=[str(FYEAR), str(FYEAR)], y=[forecast - band, forecast + band],
-    mode="lines", line=dict(color="#C8973A", width=12), opacity=0.18,
+    mode="lines", line=dict(color="#2E6CA4", width=12), opacity=0.18,
     showlegend=False, name="_band",
 ))
 fig.add_annotation(x=str(FYEAR), y=forecast, text=f"  {forecast:,.0f}", showarrow=False,
-                   font=dict(size=12, color="#8a6a1e", weight=700),
+                   font=dict(size=12, color="#23527C", weight=700),
                    xanchor="left", yanchor="bottom")
 fig.update_layout(
     **_LAYOUT,
@@ -287,10 +280,10 @@ st.plotly_chart(fig, use_container_width=True)
 
 st.markdown(f"""
 <div class='info-box' style='margin-top:10px;'>
-    <b>How this works:</b>
-    Your inputs define the cohort's recent history and school context. The model uses the same
-    Gradient Boosted Tree ensemble as the School Enrollment Report. The cohort survival rate is derived
-    from your inputs; every feature not shown is held at its CPS district median. Treat the ±RMSE band
-    (~{MODEL_RMSE:.0f} students) as the typical projection error before planning staffing.
+    <b>How this works.</b>
+    Your inputs describe one grade's recent size and a few school characteristics; the same model used
+    across this dashboard then projects next year's count. Anything you don't set is held at a typical
+    CPS value. The shaded band shows the typical error (about {MODEL_RMSE:.0f} students), so treat the
+    projection as a planning estimate, not an exact figure.
 </div>
 """, unsafe_allow_html=True)

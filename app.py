@@ -30,13 +30,13 @@ html, body, [class*="css"], * {
 /* ── Sidebar collapse / expand toggle buttons ── */
 button[data-testid="stExpandSidebarButton"],
 [data-testid="stSidebarCollapseButton"] button {
-    background-color: rgba(200, 151, 58, 0.15) !important;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C8973A'%3E%3Cpath d='M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM9 7H5v2h4V7zm0 4H5v2h4v-2zm0 4H5v2h4v-2zm10-8h-8v2h8V7zm0 4h-8v2h8v-2z'/%3E%3C/svg%3E") !important;
+    background-color: rgba(46, 108, 164, 0.15) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232E6CA4'%3E%3Cpath d='M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM9 7H5v2h4V7zm0 4H5v2h4v-2zm0 4H5v2h4v-2zm10-8h-8v2h8V7zm0 4h-8v2h8v-2z'/%3E%3C/svg%3E") !important;
     background-repeat: no-repeat !important;
     background-position: center !important;
     background-size: 20px 20px !important;
     color: transparent !important;
-    border: 1px solid rgba(200, 151, 58, 0.50) !important;
+    border: 1px solid rgba(46, 108, 164, 0.50) !important;
     border-radius: 6px !important;
     width: 36px !important;
     height: 36px !important;
@@ -58,7 +58,7 @@ button[data-testid="stExpandSidebarButton"] > *,
 }
 button[data-testid="stExpandSidebarButton"]:hover,
 [data-testid="stSidebarCollapseButton"] button:hover {
-    background-color: rgba(200, 151, 58, 0.35) !important;
+    background-color: rgba(46, 108, 164, 0.35) !important;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFFFFF'%3E%3Cpath d='M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM9 7H5v2h4V7zm0 4H5v2h4v-2zm0 4H5v2h4v-2zm10-8h-8v2h8V7zm0 4h-8v2h8v-2z'/%3E%3C/svg%3E") !important;
     background-repeat: no-repeat !important;
     background-position: center !important;
@@ -70,7 +70,7 @@ button[data-testid="stExpandSidebarButton"]:hover,
    ════════════════════════════════════════════════════ */
 [data-testid="stSidebar"] {
     background: linear-gradient(180deg, #003057 0%, #00213d 100%) !important;
-    border-right: 3px solid #C8973A !important;
+    border-right: 3px solid #2E6CA4 !important;
 }
 [data-testid="stSidebar"] p,
 [data-testid="stSidebar"] label,
@@ -88,23 +88,23 @@ button[data-testid="stExpandSidebarButton"]:hover,
     transition: background 0.2s;
 }
 [data-testid="stSidebarNavItems"] a:hover {
-    background: rgba(200, 151, 58, 0.18) !important;
+    background: rgba(46, 108, 164, 0.18) !important;
 }
 [data-testid="stSidebarNavItems"] [aria-current="page"],
 [data-testid="stSidebarNavItems"] [aria-selected="true"] {
-    background: rgba(200, 151, 58, 0.25) !important;
-    border-left: 3px solid #C8973A !important;
+    background: rgba(46, 108, 164, 0.25) !important;
+    border-left: 3px solid #2E6CA4 !important;
 }
 
 /* ── Selectbox / multiselect container ── */
 [data-testid="stSidebar"] [data-baseweb="select"] > div:first-child {
     background: rgba(255, 255, 255, 0.08) !important;
-    border: 1px solid rgba(200, 151, 58, 0.40) !important;
+    border: 1px solid rgba(46, 108, 164, 0.40) !important;
     border-radius: 6px !important;
 }
 [data-testid="stSidebar"] [data-baseweb="tag"] {
-    background: rgba(200, 151, 58, 0.30) !important;
-    border: 1px solid rgba(200, 151, 58, 0.60) !important;
+    background: rgba(46, 108, 164, 0.30) !important;
+    border: 1px solid rgba(46, 108, 164, 0.60) !important;
     border-radius: 4px !important;
 }
 [data-testid="stSidebar"] [data-baseweb="tag"] span { color: #FFFFFF !important; }
@@ -112,20 +112,20 @@ button[data-testid="stExpandSidebarButton"]:hover,
 [data-testid="stSidebar"] [data-baseweb="select"] input,
 [data-testid="stSidebar"] [data-baseweb="select"] [data-testid="stMarkdown"] {
     color: #E8EDF2 !important;
-    caret-color: #C8973A !important;
+    caret-color: #2E6CA4 !important;
 }
 
 /* ── Slider ── */
 [data-testid="stSidebar"] [data-testid="stSlider"] div[class*="StyledSliderTrack"] {
-    background: rgba(200, 151, 58, 0.30) !important;
+    background: rgba(46, 108, 164, 0.30) !important;
 }
 [data-testid="stSidebar"] [data-testid="stSlider"] div[class*="StyledSliderTrack"] > div {
-    background: #C8973A !important;
+    background: #2E6CA4 !important;
 }
 [data-testid="stSidebar"] [data-testid="stSlider"] [role="slider"] {
-    background: #C8973A !important;
+    background: #2E6CA4 !important;
     border: 2px solid #FFFFFF !important;
-    box-shadow: 0 0 0 3px rgba(200,151,58,0.30) !important;
+    box-shadow: 0 0 0 3px rgba(46,108,164,0.30) !important;
 }
 [data-testid="stSidebar"] [data-testid="stSlider"] [data-testid="stTickBarMin"],
 [data-testid="stSidebar"] [data-testid="stSlider"] [data-testid="stTickBarMax"] {
@@ -134,18 +134,18 @@ button[data-testid="stExpandSidebarButton"]:hover,
 
 /* ── Sidebar button ── */
 [data-testid="stSidebar"] .stButton > button {
-    background: rgba(200, 151, 58, 0.15) !important;
-    border: 1px solid rgba(200, 151, 58, 0.50) !important;
-    color: #F0E6D0 !important;
+    background: rgba(46, 108, 164, 0.15) !important;
+    border: 1px solid rgba(46, 108, 164, 0.50) !important;
+    color: #DCEAF6 !important;
     border-radius: 6px !important;
     font-weight: 600 !important;
     width: 100% !important;
 }
 [data-testid="stSidebar"] .stButton > button:hover {
-    background: rgba(200, 151, 58, 0.35) !important;
+    background: rgba(46, 108, 164, 0.35) !important;
     color: #FFFFFF !important;
 }
-[data-testid="stSidebar"] hr { border-color: rgba(200, 151, 58, 0.35) !important; }
+[data-testid="stSidebar"] hr { border-color: rgba(46, 108, 164, 0.35) !important; }
 [data-testid="stSidebar"] [data-testid="stImage"] { padding: 0 !important; margin: 0 !important; }
 [data-testid="stSidebar"] [data-testid="stImage"] img { display: block !important; margin: 0 !important; }
 
@@ -170,7 +170,7 @@ button[data-testid="stExpandSidebarButton"]:hover,
 
 .section-header {
     font-size: 1.1rem; font-weight: 700; color: #003057;
-    margin-bottom: 4px; border-left: 4px solid #C8973A; padding-left: 12px;
+    margin-bottom: 4px; border-left: 4px solid #2E6CA4; padding-left: 12px;
 }
 .section-sub { font-size: 0.82rem; color: #4A6580; margin-bottom: 16px; padding-left: 16px; }
 
@@ -191,7 +191,7 @@ hr.thin { border: none; border-top: 1px solid #D1DBE8; margin: 20px 0; }
     background: #003057 !important; border: none !important; color: white !important;
     border-radius: 6px !important; font-weight: 700 !important;
 }
-.stButton > button[kind="primary"]:hover { background: #C8973A !important; color: #003057 !important; }
+.stButton > button[kind="primary"]:hover { background: #2E6CA4 !important; color: #003057 !important; }
 .stAlert { border-radius: 10px; }
 </style>
 """, unsafe_allow_html=True)
@@ -200,8 +200,8 @@ hr.thin { border: none; border-top: 1px solid #D1DBE8; margin: 20px 0; }
 with st.sidebar:
     st.markdown("""
     <div style='
-        border-left: 4px solid #C8973A;
-        border-right: 4px solid #C8973A;
+        border-left: 4px solid #2E6CA4;
+        border-right: 4px solid #2E6CA4;
         margin: 0 0 0 0;
         overflow: hidden;
         line-height: 0;
@@ -218,15 +218,13 @@ with st.sidebar:
             Chicago Public Schools &nbsp;·&nbsp; 2026–2027 Projection
         </div>
     </div>
-    <hr style='border:none; border-top:1px solid rgba(200,151,58,0.4); margin:0 0 10px 0;'/>
+    <hr style='border:none; border-top:1px solid rgba(46,108,164,0.4); margin:0 0 10px 0;'/>
     """, unsafe_allow_html=True)
 
 pg = st.navigation(
     {
-        "Briefing": [
+        "Summary": [
             st.Page("app_pages/overview.py",        title="Overview",                 icon="📋", default=True),
-            st.Page("app_pages/old_system.py",      title="Old System — CSR",         icon="📜"),
-            st.Page("app_pages/ml_intelligence.py", title="ML Model Intelligence",    icon="🧠"),
         ],
         "Explore": [
             st.Page("app_pages/district.py",        title="District Overview",        icon="📊"),
@@ -239,7 +237,7 @@ pg = st.navigation(
 
 with st.sidebar:
     st.markdown("""
-    <hr style='border:none; border-top:1px solid rgba(200,151,58,0.3); margin:6px 0;'/>
+    <hr style='border:none; border-top:1px solid rgba(46,108,164,0.3); margin:6px 0;'/>
     """, unsafe_allow_html=True)
     if st.button("🔄  Refresh data", use_container_width=True):
         st.cache_data.clear()

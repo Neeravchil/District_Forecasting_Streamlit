@@ -35,9 +35,9 @@ with st.sidebar:
 st.markdown(f"""
 <div style='background:linear-gradient(135deg,#003057 0%,#00497a 100%);
             border-radius:12px; padding:32px 40px; margin-bottom:28px;
-            border-left:6px solid #C8973A;'>
+            border-left:6px solid #2E6CA4;'>
     <div style='font-size:0.72rem; font-weight:700; letter-spacing:0.14em;
-                color:#C8973A; text-transform:uppercase; margin-bottom:10px;'>
+                color:#2E6CA4; text-transform:uppercase; margin-bottom:10px;'>
         Chicago Public Schools · Enrollment Forecasting
     </div>
     <div style='font-size:1.9rem; font-weight:800; color:#FFFFFF; line-height:1.25;'>
@@ -124,21 +124,21 @@ change_clr = "#22C55E" if change_pct >= 0 else "#EF4444"
 if view_level == "school":
     kpis = [
         (f"{latest_total:,}",   f"{LATEST} Enrollment",   "Latest actual total",        "#003057"),
-        (f"{forecast_total:,}", f"{FYEAR} Projection",    "Across all grades",          "#C8973A"),
+        (f"{forecast_total:,}", f"{FYEAR} Projection",    "Across all grades",          "#2E6CA4"),
         (f"{change_pct:+.1f}%", "Projected Change",       f"{FYEAR} vs {LATEST}",       change_clr),
         (str(n_grades),         "Grades Served",          "Cohorts projected",          "#4A90C4"),
     ]
 elif view_level == "network":
     kpis = [
         (f"{latest_total:,}",   f"{LATEST} Enrollment — Network", selected_network,       "#003057"),
-        (f"{forecast_total:,}", f"{FYEAR} Projection — Network",  selected_network,       "#C8973A"),
+        (f"{forecast_total:,}", f"{FYEAR} Projection — Network",  selected_network,       "#2E6CA4"),
         (f"{change_pct:+.1f}%", "Projected Change",               f"{FYEAR} vs {LATEST}", change_clr),
         (str(n_schools),        "Schools in Network",             "Open schools",         "#4A90C4"),
     ]
 else:
     kpis = [
         (f"{latest_total:,}",   f"{LATEST} Enrollment — District", "All open schools",     "#003057"),
-        (f"{forecast_total:,}", f"{FYEAR} Projection — District",  "All open schools",     "#C8973A"),
+        (f"{forecast_total:,}", f"{FYEAR} Projection — District",  "All open schools",     "#2E6CA4"),
         (f"{change_pct:+.1f}%", "Projected Change",                f"{FYEAR} vs {LATEST}", change_clr),
         (str(n_schools),        "Open Schools",                    "District-wide",        "#4A90C4"),
     ]
@@ -183,7 +183,7 @@ if chart_mode == "By grade":
     # GRADE_NUMERIC is an internal ordinal (incl. PK/K); map back to the real grade label
     grade_label = dict(zip(scope_df["GRADE_NUMERIC"], scope_df["GRADE"].astype(str)))
     palette = ["#003057", "#0a4d80", "#1167a5", "#2e86ab", "#4A90C4",
-               "#6BA3CF", "#C8973A", "#d8ab57", "#e3c07f", "#EF4444",
+               "#6BA3CF", "#2E6CA4", "#d8ab57", "#e3c07f", "#EF4444",
                "#f06d6d", "#8B5CF6", "#a988f0"]
     for i, g in enumerate(grades):
         gh = grade_hist[grade_hist["GRADE_NUMERIC"] == g]
@@ -200,26 +200,26 @@ else:
     ))
     fig.add_trace(go.Bar(
         name=f"{FYEAR} projection", x=[str(FYEAR)], y=[forecast_total],
-        marker_color="rgba(200,151,58,0.55)",
-        marker_line=dict(color="#C8973A", width=1.5),
-        marker_pattern_shape="/", marker_pattern_fgcolor="#C8973A",
+        marker_color="rgba(46,108,164,0.55)",
+        marker_line=dict(color="#2E6CA4", width=1.5),
+        marker_pattern_shape="/", marker_pattern_fgcolor="#2E6CA4",
     ))
     if hist_x:  # only connect a trend line when there is prior history
         fig.add_trace(go.Scatter(
             name="Projection trend", x=[hist_x[-1], str(FYEAR)],
             y=[hist_y[-1], forecast_total], mode="lines+markers",
-            line=dict(color="#C8973A", width=2.5, dash="dash"),
-            marker=dict(size=9, color="#C8973A", symbol="circle-open"),
+            line=dict(color="#2E6CA4", width=2.5, dash="dash"),
+            marker=dict(size=9, color="#2E6CA4", symbol="circle-open"),
         ))
     fig.add_trace(go.Scatter(
         x=[str(FYEAR), str(FYEAR)], y=[forecast_total - band, forecast_total + band],
-        mode="lines", line=dict(color="#C8973A", width=10), opacity=0.18,
+        mode="lines", line=dict(color="#2E6CA4", width=10), opacity=0.18,
         showlegend=False, name="_band",
     ))
 
 fig.add_annotation(
     x=str(FYEAR), y=forecast_total, text=f"  {forecast_total:,}",
-    showarrow=False, font=dict(size=12, color="#8a6a1e", weight=700),
+    showarrow=False, font=dict(size=12, color="#23527C", weight=700),
     xanchor="left", yanchor="bottom",
 )
 fig.update_layout(

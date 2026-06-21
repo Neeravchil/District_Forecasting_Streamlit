@@ -34,8 +34,8 @@ n_networks        = int(fc_net["NETWORK"].nunique())
 st.markdown(f"""
 <div style='background:linear-gradient(135deg,#003057 0%,#00497a 100%);
             border-radius:12px; padding:36px 44px; margin-bottom:26px;
-            border-left:6px solid #C8973A;'>
-    <div style='font-size:0.8rem; font-weight:700; color:#C8973A; letter-spacing:0.12em;
+            border-left:6px solid #2E6CA4;'>
+    <div style='font-size:0.8rem; font-weight:700; color:#2E6CA4; letter-spacing:0.12em;
                 text-transform:uppercase; margin-bottom:10px;'>Enrollment Forecast · {FYEAR}</div>
     <div style='font-size:2.1rem; font-weight:800; color:#FFFFFF; line-height:1.2; margin-bottom:14px;'>
         How many students will walk through the door next fall?
@@ -186,9 +186,9 @@ st.markdown("<div class='section-header'>Dig deeper</div>", unsafe_allow_html=Tr
 st.markdown("<div class='section-sub'>The full story lives on these pages</div>", unsafe_allow_html=True)
 
 pages = [
-    ("#C8973A", "📜", "The Old Way — CSR", "How the long-standing method works, and where it tends to miss."),
-    ("#22C55E", "🧠", "The New Model", "What the model leans on, and the accuracy behind the numbers above."),
-    ("#4A90C4", "📊", "District & School", "Interactive views — school reports and the custom simulator."),
+    ("#2E6CA4", "📊", "District Overview", "Enrollment trends over time, and where the model beats the old method by network and grade."),
+    ("#1B9E5A", "🏫", "School Enrollment Report", "Next year's projection for any single school, grade by grade."),
+    ("#4A90C4", "🔬", "Custom School Simulator", "A what-if tool — change a cohort's recent history and watch the projection move."),
 ]
 for col, (color, icon, title, body) in zip(st.columns(3), pages):
     with col:

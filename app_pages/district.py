@@ -49,7 +49,7 @@ with st.sidebar:
 st.markdown(f"""
 <div style='background:linear-gradient(135deg,#003057 0%,#00497a 100%);
             border-radius:12px; padding:40px 48px; margin-bottom:28px;
-            border-left:6px solid #C8973A; width:100%;'>
+            border-left:6px solid #2E6CA4; width:100%;'>
     <div style='font-size:2.2rem; font-weight:800; color:#FFFFFF; line-height:1.2; margin-bottom:16px;'>
         Projecting Next Year's Enrollment Before Budgets Are Set
     </div>
@@ -91,7 +91,7 @@ col_l, col_r = st.columns([1.05, 1], gap="large")
 with col_l:
     st.markdown("""
     <div style='font-size:1.25rem; font-weight:800; color:#003057; margin-bottom:4px;
-                border-left:5px solid #C8973A; padding-left:14px;'>
+                border-left:5px solid #2E6CA4; padding-left:14px;'>
         Why Enrollment Projections Matter
     </div>
     <div style='font-size:0.82rem; color:#4A6580; margin-bottom:18px; padding-left:19px;'>
@@ -104,7 +104,7 @@ with col_l:
          "Per-pupil funding means a school's entire staffing allocation rides on its projected headcount. A forecast that is off by 30 students is a forecast that is off by a teacher."),
         ("#003057", "🪑", "Seats, sections, and classrooms",
          "Grade-level projections decide how many sections to open, how many rooms to assign, and where space is tight or going empty — months before the first bell."),
-        ("#C8973A", "📉", "Decline is uneven, not uniform",
+        ("#2E6CA4", "📉", "Decline is uneven, not uniform",
          "District enrollment has trended down, but the drop is concentrated in specific grades, schools, and networks. A single district number hides where the real pressure is."),
         ("#22C55E", "🎯", "Early enough to act",
          "Projecting the coming year now gives leadership a full planning cycle to rebalance staff, consolidate sections, and target retention before the year locks in."),
@@ -124,7 +124,7 @@ with col_l:
 with col_r:
     st.markdown("""
     <div style='font-size:1.25rem; font-weight:800; color:#003057; margin-bottom:4px;
-                border-left:5px solid #C8973A; padding-left:14px;'>
+                border-left:5px solid #2E6CA4; padding-left:14px;'>
         From School Records to a Projection — How It Works
     </div>
     <div style='font-size:0.82rem; color:#4A6580; margin-bottom:18px; padding-left:19px;'>
@@ -137,7 +137,7 @@ with col_r:
          "One row per school × grade × year — counting distinct students from the annualised enrollment table across the whole district."),
         ("#8B5CF6", "2", "Engineer leak-free lag features",
          "Last year's count, the feeder grade's count, cohort survival rates, and school totals — every feature uses only prior-year data, never the value being predicted."),
-        ("#C8973A", "3", "Train a Gradient Boosted Tree ensemble",
+        ("#2E6CA4", "3", "Train a Gradient Boosted Tree ensemble",
          "One hundred decision trees are trained in PySpark MLlib, with the 2022–24 migrant-surge years down-weighted so they inform without dominating the model."),
         ("#EF4444", "4", "Score next year without Spark",
          "The trained trees are stored as Parquet and scored in pure Python — no Java runtime needed. Projections run in milliseconds on any machine."),
@@ -189,26 +189,26 @@ fig_fc.add_trace(go.Bar(
 ))
 fig_fc.add_trace(go.Bar(
     name=f"{FYEAR} projection", x=[f"{FYEAR}"], y=[forecast_total],
-    marker_color="rgba(200,151,58,0.55)",
-    marker_line=dict(color="#C8973A", width=1.5),
-    marker_pattern_shape="/", marker_pattern_fgcolor="#C8973A",
+    marker_color="rgba(46,108,164,0.55)",
+    marker_line=dict(color="#2E6CA4", width=1.5),
+    marker_pattern_shape="/", marker_pattern_fgcolor="#2E6CA4",
 ))
 # Trend line connecting last actual -> forecast
 fig_fc.add_trace(go.Scatter(
     name="Projection trend",
     x=[str(hist_years[-1]), f"{FYEAR}"], y=[hist_vals[-1], forecast_total],
     mode="lines+markers",
-    line=dict(color="#C8973A", width=2.5, dash="dash"),
-    marker=dict(size=9, color="#C8973A", symbol="circle-open"),
+    line=dict(color="#2E6CA4", width=2.5, dash="dash"),
+    marker=dict(size=9, color="#2E6CA4", symbol="circle-open"),
 ))
 fig_fc.add_trace(go.Scatter(
     x=[f"{FYEAR}", f"{FYEAR}"], y=[fc_lower, fc_upper],
-    mode="lines", line=dict(color="#C8973A", width=10),
+    mode="lines", line=dict(color="#2E6CA4", width=10),
     opacity=0.18, showlegend=False, name="_band",
 ))
 fig_fc.add_annotation(
     x=f"{FYEAR}", y=forecast_total, text=f"  {forecast_total:,}",
-    showarrow=False, font=dict(size=12, color="#8a6a1e", weight=700),
+    showarrow=False, font=dict(size=12, color="#23527C", weight=700),
     xanchor="left", yanchor="middle",
 )
 fig_fc.update_layout(
@@ -223,13 +223,13 @@ st.plotly_chart(fig_fc, use_container_width=True)
 
 st.markdown("<hr class='thin'/>", unsafe_allow_html=True)
 
-# ── Pointer: model detail lives on the ML Model Intelligence page ─────────────
+# ── Pointer: accuracy & CSR comparison live on the Overview page ──────────────
 st.markdown("""
 <div class='insight-card'>
-    <div class='title'>📊 How the forecast is made — and how accurate it is</div>
-    <div class='body'>What the model leans on, its accuracy on held-out data, and the full
-    head-to-head against the old CSR method live on the <b>ML Model Intelligence</b> page
-    (Briefing section) — so this page can stay focused on the district's numbers.</div>
+    <div class='title'>📊 How accurate is this forecast?</div>
+    <div class='body'>The <b>Overview</b> page shows the model's accuracy on last year's held-out
+    data and exactly how much it improves on the old Cohort Survival Rate method — so this page can
+    stay focused on the district's numbers.</div>
 </div>
 """, unsafe_allow_html=True)
 
