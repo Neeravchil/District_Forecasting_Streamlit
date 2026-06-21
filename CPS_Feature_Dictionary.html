@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CPS Enrollment Forecasting — Feature Dictionary</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+         color: #1c2733; font-size: 11px; line-height: 1.45; }
+  h1 { font-size: 22px; margin: 0 0 2px; color: #14304a; }
+  h2 { font-size: 14px; margin: 22px 0 6px; color: #14304a;
+       border-bottom: 2px solid #2e86ab; padding-bottom: 3px; }
+  .sub { color: #5b6b7a; font-size: 11px; margin: 0 0 14px; }
+  .lead { background: #f3f7fa; border: 1px solid #d9e6ef; border-radius: 6px;
+          padding: 10px 12px; margin: 0 0 12px; }
+  .lead p { margin: 4px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 4px 0 6px; }
+  th { background: #2e86ab; color: #fff; text-align: left; padding: 6px 8px;
+       font-size: 10.5px; font-weight: 600; }
+  td { border-bottom: 1px solid #e3e9ee; padding: 6px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f7fafc; }
+  code { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 10px;
+         background: #eef3f7; padding: 1px 4px; border-radius: 3px; color: #0d3b54; }
+  .feat { font-weight: 700; color: #14304a; white-space: nowrap; }
+  .fill { text-align: center; font-weight: 600; white-space: nowrap; }
+  .col-feat { width: 23%; } .col-mean { width: 40%; } .col-how { width: 27%; } .col-fill { width: 10%; }
+  .note { color: #5b6b7a; font-size: 10px; }
+  .pill { display:inline-block; background:#eaf3ea; color:#2f6b3a; border:1px solid #cfe3cf;
+          border-radius: 10px; padding: 1px 7px; font-size: 9.5px; font-weight:600; }
+  .footer { margin-top: 18px; color:#7a8896; font-size: 9.5px; border-top:1px solid #e3e9ee; padding-top:6px; }
+</style>
+</head>
+<body>
+
+<h1>CPS Enrollment Forecasting — Feature Dictionary</h1>
+<p class="sub">What every model input means, how it is built, and why it is leak-free · one row per <b>school × grade × school year</b></p>
+
+<div class="lead">
+  <p><b>The goal.</b> Predict next year's enrollment for each school &amp; grade. Two models split the work:
+     a <b>GBT</b> specialist for grades 1–8 &amp; 10–12, and an <b>XGBoost</b> specialist for the entry grades K &amp; 9.</p>
+  <p><b>The golden rule (no leakage).</b> Every feature uses only information available <b>before</b> the year being
+     predicted — last year, two years ago, or a survey from a prior year. Nothing from the target year is ever used.</p>
+  <p><b>Reading the fill rate.</b> It is the share of rows that have a real value.
+     <code>*_AVG_3YR</code> features are ~100% because they use whatever history exists (even just one year).
+     <code>*_2YR_AGO</code> and <code>*_TREND</code> need a second year of history, so they sit near 84–89%.
+     Anything still missing is filled with the training-set median for the GBT, and kept as-is for XGBoost
+     (which handles blanks natively).</p>
+</div>
+
+<h2>1 · Same-grade history <span class="pill">strongest signal</span></h2>
+<p class="note">The same school &amp; grade in earlier years — by far the best predictor of next year.</p>
+<table>
+  <tr><th class="col-feat">Feature</th><th class="col-mean">What it means</th><th class="col-how">How it is built</th><th class="col-fill">Fill</th></tr>
+  <tr><td class="feat">SAME_GRADE_LAST_YEAR</td><td>How many students were in this exact school &amp; grade <b>last year</b>.</td><td>Last year's enrollment for this school+grade.</td><td class="fill">100%</td></tr>
+  <tr><td class="feat">SAME_GRADE_2YR_AGO</td><td>The same count <b>two years ago</b>.</td><td>Enrollment for this school+grade two years back.</td><td class="fill">83.6%</td></tr>
+  <tr><td class="feat">SAME_GRADE_AVG_3YR</td><td>The school+grade's <b>typical size</b> recently — smooths out one odd year.</td><td>Average of the last up to 3 years (uses fewer if that's all there is).</td><td class="fill">100%</td></tr>
+  <tr><td class="feat">SAME_GRADE_TREND</td><td>Is this grade <b>growing or shrinking</b>? Positive = grew, negative = shrank.</td><td>Last year minus two years ago.</td><td class="fill">83.6%</td></tr>
+</table>
+
+<h2>2 · Feeder-grade history <span class="pill">cohort flow</span></h2>
+<p class="note">The grade just below, in earlier years — the cohort that "promotes up" into this grade.</p>
+<table>
+  <tr><th class="col-feat">Feature</th><th class="col-mean">What it means</th><th class="col-how">How it is built</th><th class="col-fill">Fill</th></tr>
+  <tr><td class="feat">FEEDER_GRADE_LAST_YEAR</td><td>Size of the grade <b>one below</b> at this school last year — they mostly move up into this grade.</td><td>Last year's enrollment of grade N−1 at the same school (falls back to this grade's own last-year count if there is no grade below).</td><td class="fill">100%</td></tr>
+  <tr><td class="feat">FEEDER_GRADE_2YR_AGO</td><td>The same feeder count <b>two years ago</b>.</td><td>Grade N−1 at this school, two years back.</td><td class="fill">84.2%</td></tr>
+  <tr><td class="feat">FEEDER_GRADE_TREND</td><td>Is the feeder cohort <b>growing or shrinking</b>?</td><td>Feeder last year minus feeder two years ago.</td><td class="fill">84.2%</td></tr>
+</table>
+
+<h2>3 · Cohort survival rate <span class="pill">promotion strength</span></h2>
+<p class="note">What fraction of a feeder grade actually shows up in the next grade the following year. CPS's classic method.</p>
+<table>
+  <tr><th class="col-feat">Feature</th><th class="col-mean">What it means</th><th class="col-how">How it is built</th><th class="col-fill">Fill</th></tr>
+  <tr><td class="feat">COHORT_SURVIVAL_RATE</td><td>How well students <b>carried over</b> from the feeder grade into this grade — e.g. 0.95 means 95% moved up.</td><td>This grade ÷ last year's feeder grade, then shifted back one year so it only uses the past.</td><td class="fill">84.1%</td></tr>
+  <tr><td class="feat">AVG_SURVIVAL_RATE_3YR</td><td>The <b>steady-state</b> carry-over rate, averaged so one weird year doesn't dominate.</td><td>Average of that ratio over the last 3 years.</td><td class="fill">100%</td></tr>
+</table>
+
+<h2>4 · Whole-school size <span class="pill">school context</span></h2>
+<p class="note">The total size of the whole school in earlier years — captures schools that are broadly growing or closing down.</p>
+<table>
+  <tr><th class="col-feat">Feature</th><th class="col-mean">What it means</th><th class="col-how">How it is built</th><th class="col-fill">Fill</th></tr>
+  <tr><td class="feat">SCHOOL_TOTAL_LAST_YEAR</td><td>Total students in the <b>whole school</b> last year (all grades).</td><td>Sum of last year's enrollment across every grade in the school.</td><td class="fill">100%</td></tr>
+  <tr><td class="feat">SCHOOL_TOTAL_2YR_AGO</td><td>The whole-school total <b>two years ago</b>.</td><td>School-wide total, two years back.</td><td class="fill">85.0%</td></tr>
+  <tr><td class="feat">SCHOOL_TOTAL_AVG_3YR</td><td>The school's <b>typical overall size</b> recently.</td><td>Average of the school total over the last up to 3 years.</td><td class="fill">100%</td></tr>
+  <tr><td class="feat">SCHOOL_TOTAL_TREND</td><td>Is the <b>whole school</b> growing or shrinking?</td><td>School total last year minus two years ago.</td><td class="fill">85.0%</td></tr>
+</table>
+
+<h2>5 · District-wide grade trend <span class="pill">system context</span></h2>
+<p class="note">How this grade is doing across <b>all of CPS</b> — picks up city-wide demographic shifts (e.g. fewer kindergartners citywide).</p>
+<table>
+  <tr><th class="col-feat">Feature</th><th class="col-mean">What it means</th><th class="col-how">How it is built</th><th class="col-fill">Fill</th></tr>
+  <tr><td class="feat">DISTRICT_GRADE_ENROLLMENT_LAST_YEAR</td><td>Total students in this grade <b>across every CPS school</b> last year.</td><td>Sum of last year's enrollment for this grade district-wide.</td><td class="fill">100%</td></tr>
+  <tr><td class="feat">DISTRICT_GRADE_ENROLLMENT_2YR_AGO</td><td>The district-wide grade total <b>two years ago</b>.</td><td>District grade total, two years back.</td><td class="fill">88.9%</td></tr>
+  <tr><td class="feat">DISTRICT_GRADE_ENROLLMENT_AVG_3YR</td><td>The <b>typical</b> district-wide size of this grade recently.</td><td>Average of the district grade total over the last up to 3 years.</td><td class="fill">100%</td></tr>
+  <tr><td class="feat">DISTRICT_GRADE_ENROLLMENT_TREND</td><td>Is this grade growing or shrinking <b>across the whole district</b>?</td><td>District grade total last year minus two years ago.</td><td class="fill">88.9%</td></tr>
+</table>
+
+<h2>6 · 5Essentials school-climate scores <span class="pill">school quality</span></h2>
+<p class="note">Five survey-based ratings of school quality (each 1–5), from the prior year. A good school holds onto families.
+   Missing years are filled with that school's own earlier average before any district-wide fallback.</p>
+<table>
+  <tr><th class="col-feat">Feature</th><th class="col-mean">What it means</th><th class="col-how">How it is built</th><th class="col-fill">Fill</th></tr>
+  <tr><td class="feat">EFFECTIVE_LEADERS_LAST_YEAR</td><td>Prior-year rating of <b>school leadership</b> (1–5).</td><td rowspan="5">Last year's 5Essentials pillar score (1–5) for the school, attached with a one-year lag. Blanks filled with the school's own earlier-year average.</td><td class="fill">92.8%</td></tr>
+  <tr><td class="feat">COLLABORATIVE_TEACHERS_LAST_YEAR</td><td>Prior-year rating of <b>teachers working together</b> (1–5).</td><td class="fill">92.8%</td></tr>
+  <tr><td class="feat">INVOLVED_FAMILIES_LAST_YEAR</td><td>Prior-year rating of <b>family engagement</b> (1–5).</td><td class="fill">92.8%</td></tr>
+  <tr><td class="feat">SUPPORTIVE_ENVIRONMENT_LAST_YEAR</td><td>Prior-year rating of a <b>safe, supportive environment</b> (1–5).</td><td class="fill">92.8%</td></tr>
+  <tr><td class="feat">AMBITIOUS_INSTRUCTION_LAST_YEAR</td><td>Prior-year rating of <b>challenging, high-quality teaching</b> (1–5).</td><td class="fill">92.8%</td></tr>
+</table>
+
+<h2>7 · Supporting inputs (not in the fill-rate list)</h2>
+<p class="note">Used by the models or the pipeline, but not part of the "model features" fill-rate table above.</p>
+<table>
+  <tr><th class="col-feat">Field</th><th class="col-mean">What it means</th><th class="col-how">Role</th><th class="col-fill">&nbsp;</th></tr>
+  <tr><td class="feat">ENROLLMENT</td><td>The actual number of students — <b>the thing we predict</b>.</td><td>Target (label), not an input.</td><td class="fill">—</td></tr>
+  <tr><td class="feat">GRADE</td><td>The grade level (K, 1, …, 12).</td><td>Lets the GBT tell grades apart (encoded internally).</td><td class="fill">—</td></tr>
+  <tr><td class="feat">IS_MIGRANT_ANOMALY_YEAR</td><td>Flags 2022–2024, the migrant-arrival surge.</td><td>Those years are down-weighted in training (counted less); also an XGBoost input.</td><td class="fill">—</td></tr>
+</table>
+
+<div class="footer">
+  Generated for the CPS Enrollment Forecasting pipeline · feature table <code>ml_enrollment_feature_table_v4</code>.
+  Fill rates are from the most recent Stage&nbsp;1 build. All features are lagged or prior-year, so the models never see the year they are predicting.
+</div>
+
+</body>
+</html>
